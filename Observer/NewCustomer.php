@@ -28,8 +28,9 @@ use \Magento\Framework\HTTP\Client\Curl;
 use \Magento\Framework\Json\Helper\Data;
 use Mageplaza\Proofo\Helper\Data as Helper;
 use \Magento\Directory\Model\CountryFactory;
+use \Magento\Checkout\Model\Cart;
 
-class SyncOrder implements ObserverInterface
+class NewCustomer implements ObserverInterface
 {
     /**
      * @var Curl
@@ -52,6 +53,11 @@ class SyncOrder implements ObserverInterface
     protected $_countryFactory;
 
     /**
+     * @var Cart
+     */
+    protected $_cart;
+
+    /**
      * SyncOrder constructor.
      *
      * @param Curl $curl
@@ -63,13 +69,15 @@ class SyncOrder implements ObserverInterface
         Curl $curl,
         Data $jsonHelper,
         Helper $helper,
-        CountryFactory $countryFactory
+        CountryFactory $countryFactory,
+        Cart $cart
     )
     {
         $this->_curl = $curl;
         $this->jsonHelper = $jsonHelper;
         $this->_helperData = $helper;
         $this->_countryFactory = $countryFactory;
+        $this->_cart = $cart;
     }
 
     /**
@@ -82,45 +90,21 @@ class SyncOrder implements ObserverInterface
         $sharedSecret = $this->_helperData->getSharedSecret();
 
         /**
-         * @var $order  \Magento\Sales\Model\Order
+         * @var $customer \Magento\Customer\Model\Data\Customer
          */
-        $order = $observer->getEvent()->getOrder();
-
-        /**
-         * @var $billingAddress \Magento\Sales\Api\Data\OrderAddressInterface
-         */
-        $billingAddress = $order->getBillingAddress();
-        $country = $this->_countryFactory->create()->load($billingAddress->getCountryId());
-        $orderItems = $order->getAllVisibleItems();
-
-        $lineItems = [];
-        /**
-         * @var $item \Magento\Sales\Model\Order\Item
-         */
-        foreach ($orderItems as $item) {
-            $lineItems[] = [
-                "title" => $item->getName(),
-                "quantity" => $item->getQtyOrdered(),
-                "price" => $item->getPrice(),
-                "product_link" => $item->getProduct()->getProductUrl(),
-                "product_image" => $this->_helperData->getProductImage($item->getProduct())
-            ];
-        }
+        $customer = $observer->getEvent()->getCustomer();
         $body = $this->jsonHelper->jsonEncode([
-            "billing_address" => [
-                "city" => $billingAddress->getCity(),
-                "country" => $country->getName(),
-                "first_name" => $order->getCustomerFirstname(),
-                "last_name" => $order->getCustomerLastname(),
-            ],
-            "created_at" => $order->getCreatedAt(),
-            "line_items" => $lineItems
+            "id" => $customer->getId(),
+            "email" => $customer->getEmail(),
+            "created_at" => $customer->getCreatedAt(),
+            "first_name" => $customer->getFirstname(),
+            "last_name" => $customer->getLastname()
         ]);
         $generatedHash = base64_encode(hash_hmac('sha256', $body, $sharedSecret, true));
         $this->_curl->setHeaders([
             'Content-Type' => 'application/json',
             'X-Proofo-Hmac-Sha256' => $generatedHash
         ]);
-        $this->_curl->post('https://ac1b44c6.ngrok.io/webhook/order', $body);
+        $this->_curl->post('https://ac1b44c6.ngrok.io/webhook/customer', $body);
     }
 }

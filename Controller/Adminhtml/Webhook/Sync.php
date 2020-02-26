@@ -26,7 +26,8 @@ use Magento\Backend\App\Action\Context;
 use Magento\Framework\View\Result\PageFactory;
 use \Magento\Framework\HTTP\Client\Curl;
 use \Magento\Framework\Controller\Result\JsonFactory;
-use \Magento\Framework\Json\Helper\Data;
+use \Magento\Framework\Json\Helper\Data as JsonHelper;
+use Mageplaza\Proofo\Helper\Data as Helper;
 
 class Sync extends Action
 {
@@ -48,9 +49,14 @@ class Sync extends Action
     protected $jsonResultFactory;
 
     /**
-     * @var Data
+     * @var JsonHelper
      */
     protected $jsonHelper;
+
+    /**
+     * @var Helper
+     */
+    protected $_helperData;
 
     /**
      * Sync constructor.
@@ -58,37 +64,42 @@ class Sync extends Action
      * @param PageFactory $resultPageFactory
      * @param Curl $curl
      * @param JsonFactory $jsonResultFactory
-     * @param Data $jsonHelper
+     * @param JsonHelper $jsonHelper
+     * @param Helper $helper
      */
     public function __construct(
         Context $context,
         PageFactory $resultPageFactory,
         Curl $curl,
         JsonFactory $jsonResultFactory,
-        Data $jsonHelper
+        JsonHelper $jsonHelper,
+        Helper $helper
     ) {
         $this->resultPageFactory = $resultPageFactory;
         $this->_curl      = $curl;
         $this->jsonResultFactory = $jsonResultFactory;
         $this->jsonHelper = $jsonHelper;
+        $this->_helperData = $helper;
 
         parent::__construct($context);
     }
 
-    /**
-     * @return \Magento\Framework\App\ResponseInterface|\Magento\Framework\Controller\Result\Json|\Magento\Framework\Controller\ResultInterface
-     */
     public function execute()
     {
-        $this->_curl->setHeaders([
-            'Content-Type' => 'application/json'
-        ]);
-        $body = $this->jsonHelper->jsonEncode(["name" => "Thomas"]);
-        $this->_curl->post('https://e7728858.ngrok.io/webhook/order', $body);
-        $response = json_decode($this->_curl->getBody());
-        $result = $this->jsonResultFactory->create();
-        $result->setData($response);
+        try {
+            $result = $this->jsonResultFactory->create();
+            $result->setData([
+                'token' => $this->_helperData->getSharedSecret()
+            ]);
 
-        return $result;
+            return $result;
+        } catch (\Exception $e) {
+            $result = $this->jsonResultFactory->create();
+            $result->setData([
+                'message' => $e->getMessage()
+            ]);
+
+            return $result;
+        }
     }
 }
