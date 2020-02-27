@@ -73,4 +73,16 @@ class Data extends CoreHelper
     public function criticalLog($message) {
         $this->_logger->critical($message);
     }
+
+    /**
+     * @param null $storeId
+     * @return array|bool|mixed
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    public function isEnabled($storeId = null)
+    {
+        $storeId = $this->getStoreId();
+
+        return $this->getConfigValue('proofo/general/enabled', $storeId);
+    }
 }
