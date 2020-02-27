@@ -65,4 +65,12 @@ class Data extends CoreHelper
 
         return str_replace('\\', '/', $imageUrl);
     }
+
+    /**
+     * @param $message
+     * @return null|void
+     */
+    public function criticalLog($message) {
+        $this->_logger->critical($message);
+    }
 }

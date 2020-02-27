@@ -21,7 +21,6 @@
 
 namespace Mageplaza\Proofo\Observer;
 
-use Exception;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use Mageplaza\Proofo\Helper\Data as Helper;
@@ -74,43 +73,49 @@ class SyncAddToCart implements ObserverInterface
 
     /**
      * @param Observer $observer
-     *
-     * @throws Exception
+     * @return $this|void
      */
     public function execute(Observer $observer)
     {
-        /**
-         * @var $product \Magento\Catalog\Model\Product
-         */
-        $product = $observer->getEvent()->getProduct();
-        $quote = $this->_cart->getQuote();
-        $cartItems = $quote->getAllVisibleItems();
-
-        $cartAllProductIds = [];
-        foreach ($cartItems as $item) {
-            $cartAllProductIds[] = $item->getProduct()->getId();
-        }
-        $lineItems = [];
-        if (in_array($product->getId(), $cartAllProductIds)) {
-            /**
-             * @var $item \Magento\Sales\Model\Order\Item
-             */
-            foreach ($cartItems as $item) {
-                $lineItems[] = [
-                    "title" => $item->getName(),
-                    "quantity" => $item->getQtyOrdered(),
-                    "price" => $item->getPrice(),
-                    "product_link" => $item->getProduct()->getProductUrl(),
-                    "product_image" => $this->_helperData->getProductImage($item->getProduct())
-                ];
+        try {
+            if (!$this->_helperData->isEnabled()) {
+                return $this;
             }
-        }
+            /**
+             * @var $product \Magento\Catalog\Model\Product
+             */
+            $product = $observer->getEvent()->getProduct();
+            $quote = $this->_cart->getQuote();
+            $cartItems = $quote->getAllVisibleItems();
 
-        $hookData = [
-            "id" => $quote->getId(),
-            "created_at" => $quote->getCreatedAt(),
-            "line_items" => $lineItems
-        ];
-        $this->_webHookSync->syncToWebHook($hookData, WebHookSync::CART_WEBHOOK);
+            $cartAllProductIds = [];
+            foreach ($cartItems as $item) {
+                $cartAllProductIds[] = $item->getProduct()->getId();
+            }
+            $lineItems = [];
+            if (in_array($product->getId(), $cartAllProductIds)) {
+                /**
+                 * @var $item \Magento\Sales\Model\Order\Item
+                 */
+                foreach ($cartItems as $item) {
+                    $lineItems[] = [
+                        "title" => $item->getName(),
+                        "quantity" => $item->getQtyOrdered(),
+                        "price" => $item->getPrice(),
+                        "product_link" => $item->getProduct()->getProductUrl(),
+                        "product_image" => $this->_helperData->getProductImage($item->getProduct())
+                    ];
+                }
+            }
+
+            $hookData = [
+                "id" => $quote->getId(),
+                "created_at" => $quote->getCreatedAt(),
+                "line_items" => $lineItems
+            ];
+            $this->_webHookSync->syncToWebHook($hookData, WebHookSync::CART_WEBHOOK);
+        } catch (\Exception $e) {
+            $this->_helperData->criticalLog($e->getMessage());
+        }
     }
 }

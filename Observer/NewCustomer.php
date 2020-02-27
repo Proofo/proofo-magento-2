@@ -21,7 +21,6 @@
 
 namespace Mageplaza\Proofo\Observer;
 
-use Exception;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use Mageplaza\Proofo\Helper\Data as Helper;
@@ -74,22 +73,28 @@ class NewCustomer implements ObserverInterface
 
     /**
      * @param Observer $observer
-     *
-     * @throws Exception
+     * @return $this|void
      */
     public function execute(Observer $observer)
     {
-        /**
-         * @var $customer \Magento\Customer\Model\Data\Customer
-         */
-        $customer = $observer->getEvent()->getCustomer();
-        $hookData = [
-            "id" => $customer->getId(),
-            "email" => $customer->getEmail(),
-            "created_at" => $customer->getCreatedAt(),
-            "first_name" => $customer->getFirstname(),
-            "last_name" => $customer->getLastname()
-        ];
-       $this->_webHookSync->syncToWebHook($hookData, WebHookSync::CUSTOMER_WEBHOOK);
+        try {
+            if (!$this->_helperData->isEnabled()) {
+                return $this;
+            }
+            /**
+             * @var $customer \Magento\Customer\Model\Data\Customer
+             */
+            $customer = $observer->getEvent()->getCustomer();
+            $hookData = [
+                "id" => $customer->getId(),
+                "email" => $customer->getEmail(),
+                "created_at" => $customer->getCreatedAt(),
+                "first_name" => $customer->getFirstname(),
+                "last_name" => $customer->getLastname()
+            ];
+            $this->_webHookSync->syncToWebHook($hookData, WebHookSync::CUSTOMER_WEBHOOK);
+        } catch (\Exception $e) {
+            $this->_helperData->criticalLog($e->getMessage());
+        }
     }
 }

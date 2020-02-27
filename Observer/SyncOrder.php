@@ -21,7 +21,6 @@
 
 namespace Mageplaza\Proofo\Observer;
 
-use Exception;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use Mageplaza\Proofo\Helper\Data as Helper;
@@ -65,46 +64,52 @@ class SyncOrder implements ObserverInterface
 
     /**
      * @param Observer $observer
-     *
-     * @throws Exception
+     * @return $this|void
      */
     public function execute(Observer $observer)
     {
-        /**
-         * @var $order  \Magento\Sales\Model\Order
-         */
-        $order = $observer->getEvent()->getOrder();
+        try {
+            if (!$this->_helperData->isEnabled()) {
+                return $this;
+            }
+            /**
+             * @var $order  \Magento\Sales\Model\Order
+             */
+            $order = $observer->getEvent()->getOrder();
 
-        /**
-         * @var $billingAddress \Magento\Sales\Api\Data\OrderAddressInterface
-         */
-        $billingAddress = $order->getBillingAddress();
-        $country = $this->_countryFactory->create()->load($billingAddress->getCountryId());
-        $orderItems = $order->getAllVisibleItems();
+            /**
+             * @var $billingAddress \Magento\Sales\Api\Data\OrderAddressInterface
+             */
+            $billingAddress = $order->getBillingAddress();
+            $country = $this->_countryFactory->create()->load($billingAddress->getCountryId());
+            $orderItems = $order->getAllVisibleItems();
 
-        $lineItems = [];
-        /**
-         * @var $item \Magento\Sales\Model\Order\Item
-         */
-        foreach ($orderItems as $item) {
-            $lineItems[] = [
-                "title" => $item->getName(),
-                "quantity" => $item->getQtyOrdered(),
-                "price" => $item->getPrice(),
-                "product_link" => $item->getProduct()->getProductUrl(),
-                "product_image" => $this->_helperData->getProductImage($item->getProduct())
+            $lineItems = [];
+            /**
+             * @var $item \Magento\Sales\Model\Order\Item
+             */
+            foreach ($orderItems as $item) {
+                $lineItems[] = [
+                    "title" => $item->getName(),
+                    "quantity" => $item->getQtyOrdered(),
+                    "price" => $item->getPrice(),
+                    "product_link" => $item->getProduct()->getProductUrl(),
+                    "product_image" => $this->_helperData->getProductImage($item->getProduct())
+                ];
+            }
+            $hookData = [
+                "billing_address" => [
+                    "city" => $billingAddress->getCity(),
+                    "country" => $country->getName(),
+                    "first_name" => $order->getCustomerFirstname(),
+                    "last_name" => $order->getCustomerLastname(),
+                ],
+                "created_at" => $order->getCreatedAt(),
+                "line_items" => $lineItems
             ];
+            $this->_webHookSync->syncToWebHook($hookData, WebHookSync::ORDER_WEBHOOK);
+        } catch (\Exception $e) {
+            $this->_helperData->criticalLog($e->getMessage());
         }
-        $hookData = [
-            "billing_address" => [
-                "city" => $billingAddress->getCity(),
-                "country" => $country->getName(),
-                "first_name" => $order->getCustomerFirstname(),
-                "last_name" => $order->getCustomerLastname(),
-            ],
-            "created_at" => $order->getCreatedAt(),
-            "line_items" => $lineItems
-        ];
-        $this->_webHookSync->syncToWebHook($hookData, WebHookSync::ORDER_WEBHOOK);
     }
 }
