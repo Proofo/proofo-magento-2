@@ -106,7 +106,7 @@ class SyncOrder implements ObserverInterface
                     "first_name" => $order->getCustomerFirstname(),
                     "last_name" => $order->getCustomerLastname(),
                 ],
-                "created_at" => $order->getCreatedAt(),
+                "created_at" => date("c"),
                 "line_items" => $lineItems
             ];
             $this->_webHookSync->syncToWebHook($hookData, WebHookSync::ORDER_WEBHOOK, WebHookSync::ORDER_CREATE_TOPIC);

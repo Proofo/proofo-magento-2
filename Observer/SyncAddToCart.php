@@ -109,10 +109,12 @@ class SyncAddToCart implements ObserverInterface
                     "product_image" => $this->_helperData->getProductImage($product),
                     "product_id" => $product->getId()
                 ];
+                $updatedAt = $quote->getUpdatedAt() === null
+                    ? date("c")
+                    : date("c", strtotime($quote->getUpdatedAt()));
                 $hookData = [
                     "id" => $quote->getId(),
-                    "created_at" => date("c", strtotime($quote->getCreatedAt())),
-                    "updated_at" => date("c", strtotime($quote->getUpdatedAt())),
+                    "updated_at" => $updatedAt,
                     "added_item" => $addedProduct
                 ];
                 $this->_webHookSync->syncToWebHook($hookData, WebHookSync::CART_WEBHOOK, WebHookSync::CART_UPDATE_TOPIC);
