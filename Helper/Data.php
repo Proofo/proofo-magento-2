@@ -38,10 +38,20 @@ class Data extends CoreHelper
      * @return mixed
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    public function getSharedSecret() {
+    public function getSecretKey() {
         $storeId = $this->getStoreId();
 
-        return $this->getConfigValue('proofo/general/shared_secret', $storeId);
+        return $this->getConfigValue('proofo/general/secret_key', $storeId);
+    }
+
+    /**
+     * @return mixed
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    public function getAppId() {
+        $storeId = $this->getStoreId();
+
+        return $this->getConfigValue('proofo/general/app_id', $storeId);
     }
 
     /**

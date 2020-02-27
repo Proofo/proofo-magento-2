@@ -24,23 +24,12 @@ namespace Mageplaza\Proofo\Observer;
 use Exception;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
-use \Magento\Framework\HTTP\Client\Curl;
-use \Magento\Framework\Json\Helper\Data;
 use Mageplaza\Proofo\Helper\Data as Helper;
 use \Magento\Directory\Model\CountryFactory;
+use \Mageplaza\Proofo\Helper\WebHookSync;
 
 class SyncOrder implements ObserverInterface
 {
-    /**
-     * @var Curl
-     */
-    protected $_curl;
-
-    /**
-     * @var Data
-     */
-    protected $jsonHelper;
-
     /**
      * @var Helper
      */
@@ -52,24 +41,26 @@ class SyncOrder implements ObserverInterface
     protected $_countryFactory;
 
     /**
+     * @var WebHookSync
+     */
+    protected $_webHookSync;
+
+    /**
      * SyncOrder constructor.
      *
-     * @param Curl $curl
-     * @param Data $jsonHelper
      * @param Helper $helper
      * @param CountryFactory $countryFactory
+     * @param WebHookSync $webHookSync
      */
     public function __construct(
-        Curl $curl,
-        Data $jsonHelper,
         Helper $helper,
-        CountryFactory $countryFactory
+        CountryFactory $countryFactory,
+        WebHookSync $webHookSync
     )
     {
-        $this->_curl = $curl;
-        $this->jsonHelper = $jsonHelper;
         $this->_helperData = $helper;
         $this->_countryFactory = $countryFactory;
+        $this->_webHookSync = $webHookSync;
     }
 
     /**
@@ -79,8 +70,6 @@ class SyncOrder implements ObserverInterface
      */
     public function execute(Observer $observer)
     {
-        $sharedSecret = $this->_helperData->getSharedSecret();
-
         /**
          * @var $order  \Magento\Sales\Model\Order
          */
@@ -106,7 +95,7 @@ class SyncOrder implements ObserverInterface
                 "product_image" => $this->_helperData->getProductImage($item->getProduct())
             ];
         }
-        $body = $this->jsonHelper->jsonEncode([
+        $hookData = [
             "billing_address" => [
                 "city" => $billingAddress->getCity(),
                 "country" => $country->getName(),
@@ -115,12 +104,7 @@ class SyncOrder implements ObserverInterface
             ],
             "created_at" => $order->getCreatedAt(),
             "line_items" => $lineItems
-        ]);
-        $generatedHash = base64_encode(hash_hmac('sha256', $body, $sharedSecret, true));
-        $this->_curl->setHeaders([
-            'Content-Type' => 'application/json',
-            'X-Proofo-Hmac-Sha256' => $generatedHash
-        ]);
-        $this->_curl->post('https://ac1b44c6.ngrok.io/webhook/order', $body);
+        ];
+        $this->_webHookSync->syncToWebHook($hookData, WebHookSync::ORDER_WEBHOOK);
     }
 }

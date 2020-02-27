@@ -24,24 +24,13 @@ namespace Mageplaza\Proofo\Observer;
 use Exception;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
-use \Magento\Framework\HTTP\Client\Curl;
-use \Magento\Framework\Json\Helper\Data;
 use Mageplaza\Proofo\Helper\Data as Helper;
 use \Magento\Directory\Model\CountryFactory;
 use \Magento\Checkout\Model\Cart;
+use \Mageplaza\Proofo\Helper\WebHookSync;
 
 class SyncAddToCart implements ObserverInterface
 {
-    /**
-     * @var Curl
-     */
-    protected $_curl;
-
-    /**
-     * @var Data
-     */
-    protected $jsonHelper;
-
     /**
      * @var Helper
      */
@@ -58,26 +47,29 @@ class SyncAddToCart implements ObserverInterface
     protected $_cart;
 
     /**
-     * SyncOrder constructor.
+     * @var WebHookSync
+     */
+    protected $_webHookSync;
+
+    /**
+     * SyncAddToCart constructor.
      *
-     * @param Curl $curl
-     * @param Data $jsonHelper
      * @param Helper $helper
      * @param CountryFactory $countryFactory
+     * @param Cart $cart
+     * @param WebHookSync $webHookSync
      */
     public function __construct(
-        Curl $curl,
-        Data $jsonHelper,
         Helper $helper,
         CountryFactory $countryFactory,
-        Cart $cart
+        Cart $cart,
+        WebHookSync $webHookSync
     )
     {
-        $this->_curl = $curl;
-        $this->jsonHelper = $jsonHelper;
         $this->_helperData = $helper;
         $this->_countryFactory = $countryFactory;
         $this->_cart = $cart;
+        $this->_webHookSync = $webHookSync;
     }
 
     /**
@@ -87,8 +79,6 @@ class SyncAddToCart implements ObserverInterface
      */
     public function execute(Observer $observer)
     {
-        $sharedSecret = $this->_helperData->getSharedSecret();
-
         /**
          * @var $product \Magento\Catalog\Model\Product
          */
@@ -100,8 +90,8 @@ class SyncAddToCart implements ObserverInterface
         foreach ($cartItems as $item) {
             $cartAllProductIds[] = $item->getProduct()->getId();
         }
+        $lineItems = [];
         if (in_array($product->getId(), $cartAllProductIds)) {
-            $lineItems = [];
             /**
              * @var $item \Magento\Sales\Model\Order\Item
              */
@@ -116,16 +106,11 @@ class SyncAddToCart implements ObserverInterface
             }
         }
 
-        $body = $this->jsonHelper->jsonEncode([
+        $hookData = [
             "id" => $quote->getId(),
             "created_at" => $quote->getCreatedAt(),
             "line_items" => $lineItems
-        ]);
-        $generatedHash = base64_encode(hash_hmac('sha256', $body, $sharedSecret, true));
-        $this->_curl->setHeaders([
-            'Content-Type' => 'application/json',
-            'X-Proofo-Hmac-Sha256' => $generatedHash
-        ]);
-        $this->_curl->post('https://ac1b44c6.ngrok.io/webhook/cart', $body);
+        ];
+        $this->_webHookSync->syncToWebHook($hookData, WebHookSync::CART_WEBHOOK);
     }
 }
