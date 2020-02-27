@@ -92,7 +92,7 @@ class NewCustomer implements ObserverInterface
                 "first_name" => $customer->getFirstname(),
                 "last_name" => $customer->getLastname()
             ];
-            $this->_webHookSync->syncToWebHook($hookData, WebHookSync::CUSTOMER_WEBHOOK);
+            $this->_webHookSync->syncToWebHook($hookData, WebHookSync::CUSTOMER_WEBHOOK, WebHookSync::CUSTOMER_CREATE_TOPIC);
         } catch (\Exception $e) {
             $this->_helperData->criticalLog($e->getMessage());
         }

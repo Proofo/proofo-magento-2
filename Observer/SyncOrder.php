@@ -89,12 +89,14 @@ class SyncOrder implements ObserverInterface
              * @var $item \Magento\Sales\Model\Order\Item
              */
             foreach ($orderItems as $item) {
+                $product = $item->getProduct();
                 $lineItems[] = [
                     "title" => $item->getName(),
                     "quantity" => $item->getQtyOrdered(),
                     "price" => $item->getPrice(),
-                    "product_link" => $item->getProduct()->getProductUrl(),
-                    "product_image" => $this->_helperData->getProductImage($item->getProduct())
+                    "product_link" => $product->getProductUrl(),
+                    "product_image" => $this->_helperData->getProductImage($product),
+                    "product_id" => $product->getId()
                 ];
             }
             $hookData = [
@@ -107,7 +109,7 @@ class SyncOrder implements ObserverInterface
                 "created_at" => $order->getCreatedAt(),
                 "line_items" => $lineItems
             ];
-            $this->_webHookSync->syncToWebHook($hookData, WebHookSync::ORDER_WEBHOOK);
+            $this->_webHookSync->syncToWebHook($hookData, WebHookSync::ORDER_WEBHOOK, WebHookSync::ORDER_CREATE_TOPIC);
         } catch (\Exception $e) {
             $this->_helperData->criticalLog($e->getMessage());
         }

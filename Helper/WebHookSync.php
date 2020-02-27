@@ -34,6 +34,12 @@ class WebHookSync
 
     const CUSTOMER_WEBHOOK = "customer";
 
+    const CART_UPDATE_TOPIC = "cart/update";
+
+    const ORDER_CREATE_TOPIC = "order/create";
+
+    const CUSTOMER_CREATE_TOPIC = "customer/create";
+
     /**
      * @var Curl
      */
@@ -122,8 +128,9 @@ class WebHookSync
     /**
      * @param $hookData
      * @param $type
+     * @param $topic
      */
-    public function syncToWebHook ($hookData, $type)
+    public function syncToWebHook ($hookData, $type, $topic)
     {
         try {
             $sharedSecret = $this->getSecretKey();
@@ -133,9 +140,10 @@ class WebHookSync
             $this->_curl->setHeaders([
                 'Content-Type' => 'application/json',
                 'X-Proofo-Hmac-Sha256' => $generatedHash,
-                'X-Proofo-App-Id' => $appId
+                'X-Proofo-App-Id' => $appId,
+                'X-Proofo-Topic' => $topic
             ]);
-            $this->_curl->post("https:///0be6e0ce.ngrok.io/webhook/$type", $body);
+            $this->_curl->post("https:///9119cd55.ngrok.io/webhook/$type", $body);
         } catch (\Exception $e) {
             $this->_logger->critical($e->getMessage());
         }

@@ -28,6 +28,12 @@ use \Magento\Directory\Model\CountryFactory;
 use \Magento\Checkout\Model\Cart;
 use \Mageplaza\Proofo\Helper\WebHookSync;
 
+/**
+ * todo : Fix first cart item issue
+ *
+ * Class SyncAddToCart
+ * @package Mageplaza\Proofo\Observer
+ */
 class SyncAddToCart implements ObserverInterface
 {
     /**
@@ -92,28 +98,27 @@ class SyncAddToCart implements ObserverInterface
             foreach ($cartItems as $item) {
                 $cartAllProductIds[] = $item->getProduct()->getId();
             }
-            $lineItems = [];
-            if (in_array($product->getId(), $cartAllProductIds)) {
+            if (!in_array($product->getId(), $cartAllProductIds)) {
                 /**
                  * @var $item \Magento\Sales\Model\Order\Item
                  */
-                foreach ($cartItems as $item) {
-                    $lineItems[] = [
-                        "title" => $item->getName(),
-                        "quantity" => $item->getQtyOrdered(),
-                        "price" => $item->getPrice(),
-                        "product_link" => $item->getProduct()->getProductUrl(),
-                        "product_image" => $this->_helperData->getProductImage($item->getProduct())
-                    ];
-                }
+                $addedProduct = [
+                    "product_name" => $product->getName(),
+                    "price" => $product->getPrice(),
+                    "product_link" => $product->getProductUrl(),
+                    "product_image" => $this->_helperData->getProductImage($product),
+                    "product_id" => $product->getId()
+                ];
+                $hookData = [
+                    "id" => $quote->getId(),
+                    "created_at" => date("c", strtotime($quote->getCreatedAt())),
+                    "updated_at" => date("c", strtotime($quote->getUpdatedAt())),
+                    "added_item" => $addedProduct
+                ];
+                $this->_webHookSync->syncToWebHook($hookData, WebHookSync::CART_WEBHOOK, WebHookSync::CART_UPDATE_TOPIC);
             }
 
-            $hookData = [
-                "id" => $quote->getId(),
-                "created_at" => $quote->getCreatedAt(),
-                "line_items" => $lineItems
-            ];
-            $this->_webHookSync->syncToWebHook($hookData, WebHookSync::CART_WEBHOOK);
+
         } catch (\Exception $e) {
             $this->_helperData->criticalLog($e->getMessage());
         }
