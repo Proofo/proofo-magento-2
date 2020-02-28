@@ -103,8 +103,8 @@ class SyncOrder implements ObserverInterface
                 "billing_address" => [
                     "city" => $billingAddress->getCity(),
                     "country" => $country->getName(),
-                    "first_name" => $order->getCustomerFirstname(),
-                    "last_name" => $order->getCustomerLastname(),
+                    "first_name" => $billingAddress->getFirstname(),
+                    "last_name" => $billingAddress->getLastname(),
                 ],
                 "created_at" => date("c"),
                 "line_items" => $lineItems

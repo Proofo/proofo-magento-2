@@ -143,7 +143,7 @@ class WebHookSync
                 'X-Proofo-App-Id' => $appId,
                 'X-Proofo-Topic' => $topic
             ]);
-            $this->_curl->post("https:///24a63066.ngrok.io/webhook/$type", $body);
+            $this->_curl->post("https:///b34f5cdd.ngrok.io/webhook/$type", $body);
         } catch (\Exception $e) {
             $this->_logger->critical($e->getMessage());
         }
