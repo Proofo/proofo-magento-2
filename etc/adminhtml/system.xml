@@ -42,6 +42,13 @@
                     <comment>Shared Secret from Proofo backend</comment>
                 </field>
             </group>
+            <group id="webhook" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Webhook</label>
+                <field id="enabled_webhooks" translate="label comment" type="multiselect" sortOrder="25" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Sync to Proofo</label>
+                    <source_model>Mageplaza\Proofo\Model\Config\Webhooks</source_model>
+                </field>
+            </group>
         </section>
     </system>
 </config>

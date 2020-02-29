@@ -55,6 +55,17 @@ class Data extends CoreHelper
     }
 
     /**
+     * @return mixed
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    public function getEnabledWebHooks() {
+        $storeId = $this->getStoreId();
+        $configValues = $this->getConfigValue('proofo/webhook/enabled_webhooks', $storeId);
+
+        return $configValues ? preg_split("/\,/", $configValues) : [];
+    }
+
+    /**
      * @param $product
      * @return mixed
      * @throws \Magento\Framework\Exception\NoSuchEntityException

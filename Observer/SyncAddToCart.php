@@ -27,6 +27,7 @@ use Mageplaza\Proofo\Helper\Data as Helper;
 use \Magento\Directory\Model\CountryFactory;
 use \Magento\Checkout\Model\Cart;
 use \Mageplaza\Proofo\Helper\WebHookSync;
+use Mageplaza\Proofo\Model\Config\Webhooks;
 
 /**
  * todo : Fix first cart item issue
@@ -87,6 +88,12 @@ class SyncAddToCart implements ObserverInterface
             if (!$this->_helperData->isEnabled()) {
                 return $this;
             }
+
+            $enabledWebHooks = $this->_helperData->getEnabledWebHooks();
+            if (!in_array(Webhooks::CART_HOOK, $enabledWebHooks)) {
+                return $this;
+            }
+
             /**
              * @var $product \Magento\Catalog\Model\Product
              */

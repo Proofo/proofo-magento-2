@@ -26,6 +26,7 @@ use Magento\Framework\Event\ObserverInterface;
 use Mageplaza\Proofo\Helper\Data as Helper;
 use \Magento\Directory\Model\CountryFactory;
 use \Mageplaza\Proofo\Helper\WebHookSync;
+use Mageplaza\Proofo\Model\Config\Webhooks;
 
 class SyncOrder implements ObserverInterface
 {
@@ -70,6 +71,11 @@ class SyncOrder implements ObserverInterface
     {
         try {
             if (!$this->_helperData->isEnabled()) {
+                return $this;
+            }
+
+            $enabledWebHooks = $this->_helperData->getEnabledWebHooks();
+            if (!in_array(Webhooks::ORDER_HOOK, $enabledWebHooks)) {
                 return $this;
             }
             /**

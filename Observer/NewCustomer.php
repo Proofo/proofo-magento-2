@@ -27,6 +27,7 @@ use Mageplaza\Proofo\Helper\Data as Helper;
 use \Magento\Directory\Model\CountryFactory;
 use \Magento\Checkout\Model\Cart;
 use \Mageplaza\Proofo\Helper\WebHookSync;
+use Mageplaza\Proofo\Model\Config\Webhooks;
 
 class NewCustomer implements ObserverInterface
 {
@@ -79,6 +80,11 @@ class NewCustomer implements ObserverInterface
     {
         try {
             if (!$this->_helperData->isEnabled()) {
+                return $this;
+            }
+
+            $enabledWebHooks = $this->_helperData->getEnabledWebHooks();
+            if (!in_array(Webhooks::SIGNUP_HOOK, $enabledWebHooks)) {
                 return $this;
             }
             /**

@@ -89,7 +89,7 @@ class Sync extends Action
         try {
             $result = $this->jsonResultFactory->create();
             $result->setData([
-                'token' => $this->_helperData->getSharedSecret()
+                'data' => $this->_helperData->getEnabledWebHooks()
             ]);
 
             return $result;
