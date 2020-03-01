@@ -24,8 +24,8 @@ namespace Avada\Proofo\Model\Config;
 use Magento\Framework\Option\ArrayInterface;
 
 /**
- * Class Showlink
- * @package Mageplaza\Affiliate\Model\Config\Source
+ * Class Webhooks
+ * @package Avada\Proofo\Model\Config
  */
 class Webhooks implements ArrayInterface
 {

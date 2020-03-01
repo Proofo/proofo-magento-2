@@ -23,7 +23,7 @@ namespace Avada\Proofo\Observer;
 
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
-use Mageplaza\Avada\Helper\Data as Helper;
+use Avada\Helper\Data as Helper;
 use \Magento\Directory\Model\CountryFactory;
 use \Magento\Checkout\Model\Cart;
 use \Avada\Proofo\Helper\WebHookSync;

@@ -1,31 +1,32 @@
 <?php
 /**
- * Mageplaza
+ * Avada
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the Mageplaza.com license that is
+ * This source file is subject to the avada.io license that is
  * available through the world-wide-web at this URL:
- * https://www.mageplaza.com/LICENSE.txt
+ * https://www.avada.io/LICENSE.txt
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade this extension to newer
  * version in the future.
  *
- * @category    Mageplaza
- * @package     Mageplaza_Proofo
- * @copyright   Copyright (c) Mageplaza (https://www.mageplaza.com/)
- * @license     https://www.mageplaza.com/LICENSE.txt
+ * @category    Avada
+ * @package     Avada_Proofo
+ * @copyright   Copyright (c) Avada (https://www.avada.io/)
+ * @license     https://www.avada.io/LICENSE.txt
  */
 
-namespace Mageplaza\Proofo\Helper;
+namespace Avada\Proofo\Helper;
 
 use \Magento\Store\Model\StoreManagerInterface;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Helper\Context;
 use Magento\Framework\App\Area;
+use Magento\Store\Model\ScopeInterface;
 
 class Data extends AbstractHelper
 {
