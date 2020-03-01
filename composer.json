@@ -1,17 +1,14 @@
 {
-  "name": "mageplaza/module-proofo",
-  "description": "Avada Proofo Extension",
-  "require": {
-    "mageplaza/module-core": "^1.4.4"
-  },
+  "name": "avada/module-proofo",
+  "description": "Avada Proofo Extension"
   "type": "magento2-module",
   "version": "1.0.0",
   "license": "proprietary",
   "authors": [
     {
-      "name": "Mageplaza",
-      "email": "support@mageplaza.com",
-      "homepage": "https://www.mageplaza.com",
+      "name": "Avada",
+      "email": "support@avada.io",
+      "homepage": "https://www.avada.io",
       "role": "Technical Support"
     }
   ],
@@ -20,7 +17,7 @@
       "registration.php"
     ],
     "psr-4": {
-      "Mageplaza\\Proofo\\": ""
+      "Avada\\Proofo\\": ""
     }
   }
 }

@@ -19,7 +19,7 @@
  * @license     https://www.mageplaza.com/LICENSE.txt
  */
 
-namespace Mageplaza\Proofo\Controller\Adminhtml\Webhook;
+namespace Avada\Proofo\Controller\Adminhtml\Webhook;
 
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
@@ -27,7 +27,7 @@ use Magento\Framework\View\Result\PageFactory;
 use \Magento\Framework\HTTP\Client\Curl;
 use \Magento\Framework\Controller\Result\JsonFactory;
 use \Magento\Framework\Json\Helper\Data as JsonHelper;
-use Mageplaza\Proofo\Helper\Data as Helper;
+use Mageplaza\Avada\Helper\Data as Helper;
 
 class Sync extends Action
 {

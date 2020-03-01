@@ -21,10 +21,53 @@
 
 namespace Mageplaza\Proofo\Helper;
 
-use Mageplaza\Core\Helper\AbstractData as CoreHelper;
+use \Magento\Store\Model\StoreManagerInterface;
+use Magento\Framework\ObjectManagerInterface;
+use Magento\Framework\App\Helper\AbstractHelper;
+use Magento\Framework\App\Helper\Context;
+use Magento\Framework\App\Area;
 
-class Data extends CoreHelper
+class Data extends AbstractHelper
 {
+    /**
+     * @type \Magento\Store\Model\StoreManagerInterface
+     */
+    protected $storeManager;
+
+    /**
+     * @type \Magento\Framework\ObjectManagerInterface
+     */
+    protected $objectManager;
+
+    /**
+     * @var array
+     */
+    protected $isArea = [];
+
+    /**
+     * @var \Magento\Backend\App\Config
+     */
+    protected $backendConfig;
+
+    /**
+     * Data constructor.
+     *
+     * @param Context $context
+     * @param StoreManagerInterface $storeManager
+     * @param ObjectManagerInterface $objectManager
+     */
+    public function __construct(
+        Context $context,
+        StoreManagerInterface $storeManager,
+        ObjectManagerInterface $objectManager
+    )
+    {
+        $this->storeManager = $storeManager;
+        $this->objectManager = $objectManager;
+
+        parent::__construct($context);
+    }
+
     /**
      * @return int
      * @throws \Magento\Framework\Exception\NoSuchEntityException
@@ -95,5 +138,47 @@ class Data extends CoreHelper
         $storeId = $this->getStoreId();
 
         return $this->getConfigValue('proofo/general/enabled', $storeId);
+    }
+
+    /**
+     * @param $field
+     * @param null $scopeValue
+     * @param string $scopeType
+     *
+     * @return array|mixed
+     */
+    public function getConfigValue($field, $scopeValue = null, $scopeType = ScopeInterface::SCOPE_STORE)
+    {
+        if (!$this->isArea() && is_null($scopeValue)) {
+            /** @var \Magento\Backend\App\Config $backendConfig */
+            if (!$this->backendConfig) {
+                $this->backendConfig = $this->objectManager->get('Magento\Backend\App\ConfigInterface');
+            }
+
+            return $this->backendConfig->getValue($field);
+        }
+
+        return $this->scopeConfig->getValue($field, $scopeType, $scopeValue);
+    }
+
+    /**
+     * @param string $area
+     *
+     * @return mixed
+     */
+    public function isArea($area = Area::AREA_FRONTEND)
+    {
+        if (!isset($this->isArea[$area])) {
+            /** @var \Magento\Framework\App\State $state */
+            $state = $this->objectManager->get('Magento\Framework\App\State');
+
+            try {
+                $this->isArea[$area] = ($state->getAreaCode() == $area);
+            } catch (\Exception $e) {
+                $this->isArea[$area] = false;
+            }
+        }
+
+        return $this->isArea[$area];
     }
 }

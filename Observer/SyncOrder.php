@@ -1,32 +1,32 @@
 <?php
 /**
- * Mageplaza
+ * Avada
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the Mageplaza.com license that is
+ * This source file is subject to the avada.io license that is
  * available through the world-wide-web at this URL:
- * https://www.mageplaza.com/LICENSE.txt
+ * https://www.avada.io/LICENSE.txt
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade this extension to newer
  * version in the future.
  *
- * @category    Mageplaza
- * @package     Mageplaza_Proofo
- * @copyright   Copyright (c) Mageplaza (https://www.mageplaza.com/)
- * @license     https://www.mageplaza.com/LICENSE.txt
+ * @category    Avada
+ * @package     Avada_Proofo
+ * @copyright   Copyright (c) Avada (https://www.avada.io/)
+ * @license     https://www.avada.io/LICENSE.txt
  */
 
-namespace Mageplaza\Proofo\Observer;
+namespace Avada\Proofo\Observer;
 
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
-use Mageplaza\Proofo\Helper\Data as Helper;
+use Avada\Proofo\Helper\Data as Helper;
 use \Magento\Directory\Model\CountryFactory;
-use \Mageplaza\Proofo\Helper\WebHookSync;
-use Mageplaza\Proofo\Model\Config\Webhooks;
+use \Avada\Proofo\Helper\WebHookSync;
+use Avada\Proofo\Model\Config\Webhooks;
 
 class SyncOrder implements ObserverInterface
 {
