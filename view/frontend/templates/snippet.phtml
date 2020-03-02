@@ -1,26 +1,26 @@
 <?php
 /**
- * Mageplaza
+ * Avada
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the Mageplaza.com license that is
+ * This source file is subject to the avada.io license that is
  * available through the world-wide-web at this URL:
- * https://www.mageplaza.com/LICENSE.txt
+ * https://www.avada.io/LICENSE.txt
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade this extension to newer
  * version in the future.
  *
- * @category    Mageplaza
- * @package     Mageplaza_SalesPop
- * @copyright   Copyright (c) Mageplaza (https://www.mageplaza.com/)
- * @license     https://www.mageplaza.com/LICENSE.txt
+ * @category    Avada
+ * @package     Avada_Proofo
+ * @copyright   Copyright (c) Avada (https://www.avada.io/)
+ * @license     https://www.avada.io/LICENSE.txt
  */
 ?>
 <?php
-/** @var Mageplaza\Proofo\Block\Snippet $block */
+/** @var Avada\Proofo\Block\Snippet $block */
 if ($block->isEnabled()) : ?>
-<script data-cfasync="false" type="text/javascript">(function(a,v,d,b,p){a.AVADA_SALES_POP=a.AVADA_SALES_POP||{};a.AVADA_SALES_POP.domain=p;var s=v.createElement(d);s.type="text/javascript";s.async=true;s.src=b;var x=v.getElementsByTagName(d)[0];x.parentNode.insertBefore(s,x);})(window,document,"script","https://localhost:3000/sdk/proofo-sdk.min.js", "<?= $block->getAppId() ?>");</script>
+<script data-cfasync="false" type="text/javascript">(function(a,v,d,b,p){a.AVADA_SALES_POP=a.AVADA_SALES_POP||{};a.AVADA_SALES_POP.domain=p;var s=v.createElement(d);s.type="text/javascript";s.async=true;s.src=b;var x=v.getElementsByTagName(d)[0];x.parentNode.insertBefore(s,x);})(window,document,"script","https://avada-sales-pop-staging.firebaseapp.com/sdk/proofo-sdk.min.js", "<?= $block->getAppId() ?>");</script>
 <?php endif; ?>
