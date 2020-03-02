@@ -26,6 +26,11 @@ use \Magento\Framework\Json\Helper\Data;
 use Mageplaza\Proofo\Helper\Data as Helper;
 use \Psr\Log\LoggerInterface as Logger;
 
+/**
+ * Class WebHookSync
+ *
+ * @package Mageplaza\Proofo\Helper
+ */
 class WebHookSync
 {
     const CART_WEBHOOK = "cart";
@@ -143,7 +148,7 @@ class WebHookSync
                 'X-Proofo-App-Id' => $appId,
                 'X-Proofo-Topic' => $topic
             ]);
-            $this->_curl->post("https:///24a63066.ngrok.io/webhook/$type", $body);
+            $this->_curl->post("https://avada-sales-pop-staging.firebaseapp.com/webhook/$type", $body);
         } catch (\Exception $e) {
             $this->_logger->critical($e->getMessage());
         }
