@@ -94,7 +94,7 @@ class NewCustomer implements ObserverInterface
             $hookData = [
                 "id" => $customer->getId(),
                 "email" => $customer->getEmail(),
-                "created_at" => $customer->getCreatedAt(),
+                "created_at" => date("c"),
                 "first_name" => $customer->getFirstname(),
                 "last_name" => $customer->getLastname()
             ];
