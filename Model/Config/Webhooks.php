@@ -41,7 +41,6 @@ class Webhooks implements ArrayInterface
     public function toOptionArray()
     {
         $optionArray = [];
-        $optionArray[] = ['value' => '', 'label' => __('-- Please Select --')];
 
         foreach ($this->toArray() as $key => $value) {
             $optionArray[] = ['value' => $key, 'label' => $value];
@@ -58,9 +57,9 @@ class Webhooks implements ArrayInterface
     public function toArray()
     {
         return [
-            self::ORDER_HOOK => __('Order hook'),
-            self::CART_HOOK => __('Add-to-cart hook'),
-            self::SIGNUP_HOOK => __('Sign-up hook')
+            self::ORDER_HOOK => __('New Order'),
+            self::CART_HOOK => __('Customer Add item to cart'),
+            self::SIGNUP_HOOK => __('New Customer')
         ];
     }
 }

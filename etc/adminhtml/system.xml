@@ -22,12 +22,12 @@
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
     <system>
-        <tab id="proofo" translate="label" sortOrder="401">
-            <label>Avada Commerce</label>
+        <tab id="proofo" translate="label" sortOrder="402">
+            <label>Social Proof</label>
         </tab>
         <section id="proofo" translate="label" type="text" sortOrder="400" showInDefault="1">
             <class>separator-top</class>
-            <label>Proofo</label>
+            <label>Accounts</label>
             <tab>proofo</tab>
             <resource>Avada_Proofo::configuration</resource>
             <group id="general" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
@@ -35,21 +35,41 @@
                 <field id="enabled" translate="label comment" type="select" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Enable</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[Dont' have an API? <a href="https://proofo.io/" target="_blank">click here</a> to know how to create new one.?]]></comment>
+
                 </field>
                 <field id="app_id" translate="label comment" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>App ID</label>
-                    <comment>App ID from Proofo backend</comment>
+                    <comment><![CDATA[App ID from Proofo backend. Get <a href="https://app.proofo.io/" target="_blank">App ID here</a>.]]></comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
                 </field>
                 <field id="secret_key" translate="label comment" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Secret key</label>
-                    <comment>Shared Secret from Proofo backend</comment>
+                    <comment><![CDATA[Secret key from Proofo backend. ]]></comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="test_connection" translate="label" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label></label>
+                    <button_label>Test Now</button_label>
+                    <button_url>adminhtml/smtp/test</button_url>
+                    <frontend_model>Mageplaza\Smtp\Block\Adminhtml\System\Config\Button</frontend_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
                 </field>
             </group>
             <group id="webhook" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
-                <label>Webhook</label>
+                <label>Sync</label>
                 <field id="enabled_webhooks" translate="label comment" type="multiselect" sortOrder="25" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Sync to Proofo</label>
+                    <label>When sync to Proofo</label>
                     <source_model>Avada\Proofo\Model\Config\Webhooks</source_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
                 </field>
             </group>
         </section>
