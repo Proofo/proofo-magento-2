@@ -24,6 +24,7 @@ namespace Avada\Proofo\Helper;
 use \Magento\Framework\HTTP\Client\Curl;
 use \Magento\Framework\Json\Helper\Data;
 use Avada\Proofo\Helper\Data as Helper;
+use Magento\Setup\Exception;
 use \Psr\Log\LoggerInterface as Logger;
 
 /**
@@ -135,24 +136,26 @@ class WebHookSync
      * @param $type
      * @param $topic
      * @param bool $isTest
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
     public function syncToWebHook ($hookData, $type, $topic, $isTest = false)
     {
-        try {
-            $sharedSecret = $this->getSecretKey();
-            $appId = $this->getAppId();
-            $body = $this->jsonHelper->jsonEncode($hookData);
-            $generatedHash = base64_encode(hash_hmac('sha256', $body, $sharedSecret, true));
-            $this->_curl->setHeaders([
-                'Content-Type' => 'application/json',
-                'X-Proofo-Hmac-Sha256' => $generatedHash,
-                'X-Proofo-App-Id' => $appId,
-                'X-Proofo-Topic' => $topic,
-                'X-Proofo-Connection-Test' => $isTest
-            ]);
-            $this->_curl->post("https://avada-sales-pop-staging.firebaseapp.com/webhook/$type", $body);
-        } catch (\Exception $e) {
-            $this->_logger->critical($e->getMessage());
+        $sharedSecret = $this->getSecretKey();
+        $appId = $this->getAppId();
+        $body = $this->jsonHelper->jsonEncode($hookData);
+        $generatedHash = base64_encode(hash_hmac('sha256', $body, $sharedSecret, true));
+        $this->_curl->setHeaders([
+            'Content-Type' => 'application/json',
+            'X-Proofo-Hmac-Sha256' => $generatedHash,
+            'X-Proofo-App-Id' => $appId,
+            'X-Proofo-Topic' => $topic,
+            'X-Proofo-Connection-Test' => $isTest
+        ]);
+        $this->_curl->post("https://avada-sales-pop-staging.firebaseapp.com/webhook/$type", $body);
+        if ($this->_curl->getStatus() !== 200) {
+            $body = $this->_curl->getBody();
+            $bodyData = $this->jsonHelper->jsonDecode($body);
+            throw new \Exception($bodyData['message']);
         }
     }
 }
