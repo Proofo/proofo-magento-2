@@ -95,16 +95,39 @@ class SyncOrder implements ObserverInterface
              * @var $item \Magento\Sales\Model\Order\Item
              */
             foreach ($orderItems as $item) {
-                $product = $item->getProduct();
-                $lineItems[] = [
-                    "title" => $item->getName(),
-                    "quantity" => $item->getQtyOrdered(),
-                    "price" => $item->getPrice(),
-                    "product_link" => $product->getProductUrl(),
-                    "product_image" => $this->_helperData->getProductImage($product),
-                    "product_id" => $product->getId()
-                ];
+                if (
+                    $item->getHasChildren() &&
+                    $item->isChildrenCalculated() &&
+                    $this->_helperData->getBundleAsMultipleItems()
+                ) {
+                    /** @var \Magento\Sales\Model\Order\Item $childItem */
+                    foreach ($item->getChildrenItems() as $childItem) {
+                        /** @var \Magento\Catalog\Model\Product $childProduct */
+                        $childProduct = $childItem->getProduct();
+                        $lineItems[] = [
+                            "product_name" => $childProduct->getName(),
+                            "price" => $childProduct->getPrice(),
+                            "product_link" => $childProduct->getProductUrl(),
+                            "product_image" => $this->_helperData->getProductImage($childProduct),
+                            "product_id" => $childProduct->getId()
+                        ];
+                    }
+                } else {
+                    $product = $item->getProduct();
+                    $lineItems[] = [
+                        "title" => $item->getName(),
+                        "quantity" => $item->getQtyOrdered(),
+                        "price" => $item->getPrice(),
+                        "product_link" => $product->getProductUrl(),
+                        "product_image" => $this->_helperData->getProductImage($product),
+                        "product_id" => $product->getId()
+                    ];
+                }
             }
+
+            $createdAt = $order->getUpdatedAt() === null
+                ? date("c")
+                : date("c", strtotime($order->getUpdatedAt()));
             $hookData = [
                 "billing_address" => [
                     "city" => $billingAddress->getCity(),
@@ -112,7 +135,7 @@ class SyncOrder implements ObserverInterface
                     "first_name" => $billingAddress->getFirstname(),
                     "last_name" => $billingAddress->getLastname(),
                 ],
-                "created_at" => date("c"),
+                "created_at" => $createdAt,
                 "line_items" => $lineItems
             ];
             $this->_webHookSync->syncToWebHook($hookData, WebHookSync::ORDER_WEBHOOK, WebHookSync::ORDER_CREATE_TOPIC);

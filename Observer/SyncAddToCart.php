@@ -94,11 +94,6 @@ class SyncAddToCart implements ObserverInterface
                 return $this;
             }
 
-            $writer = new \Zend\Log\Writer\Stream(BP . '/var/log/proofo-test123.log');
-            $logger = new \Zend\Log\Logger();
-            $logger->addWriter($writer);
-
-
             /**
              * @var $product \Magento\Catalog\Model\Product
              */
@@ -111,8 +106,12 @@ class SyncAddToCart implements ObserverInterface
 
             if (intval($quoteItem->getQty()) === 1) {
                 $addedProducts = [];
-                if ($quoteItem->getHasChildren() && $quoteItem->isChildrenCalculated()) {
-                    /** @var \Magento\Quote\Model\Quote\Item $child */
+                if (
+                    $quoteItem->getHasChildren() &&
+                    $quoteItem->isChildrenCalculated() &&
+                    $this->_helperData->getBundleAsMultipleItems()
+                ) {
+                    /** @var \Magento\Sales\Model\Order\Item $child */
                     foreach ($quoteItem->getChildren() as $childItem) {
                         if ($childItem->getQtyOrdered() === 0) continue;
 

@@ -109,6 +109,12 @@ class Data extends AbstractHelper
         return $configValues ? preg_split("/\,/", $configValues) : [];
     }
 
+    public function getBundleAsMultipleItems() {
+        $storeId = $this->getStoreId();
+
+        return $this->getConfigValue('proofo/webhook/bundle_as_multiple', $storeId);
+    }
+
     /**
      * @param $product \Magento\Catalog\Model\Product
      * @return mixed

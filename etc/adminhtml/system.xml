@@ -36,7 +36,6 @@
                     <label>Enable</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <comment><![CDATA[Dont' have an API? <a href="https://proofo.io/" target="_blank">click here</a> to know how to create new one.?]]></comment>
-
                 </field>
                 <field id="app_id" translate="label comment" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>App ID</label>
@@ -55,8 +54,6 @@
                 <field id="test_connection" translate="label" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label></label>
                     <button_label>Test Now</button_label>
-                    <button_url>adminhtml/smtp/test</button_url>
-                    <frontend_model>Mageplaza\Smtp\Block\Adminhtml\System\Config\Button</frontend_model>
                     <depends>
                         <field id="enabled">1</field>
                     </depends>
@@ -67,6 +64,13 @@
                 <field id="enabled_webhooks" translate="label comment" type="multiselect" sortOrder="25" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>When sync to Proofo</label>
                     <source_model>Avada\Proofo\Model\Config\Webhooks</source_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="bundle_as_multiple" translate="label comment" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Sync bundle product as multiple items</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <depends>
                         <field id="enabled">1</field>
                     </depends>
