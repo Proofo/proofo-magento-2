@@ -110,7 +110,7 @@ class Data extends AbstractHelper
     }
 
     /**
-     * @param $product
+     * @param $product \Magento\Catalog\Model\Product
      * @return mixed
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */

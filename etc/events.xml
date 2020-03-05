@@ -24,7 +24,7 @@
     <event name="checkout_submit_all_after">
         <observer name="proofo_new_order_sync" instance="Avada\Proofo\Observer\SyncOrder"/>
     </event>
-    <event name="checkout_cart_product_add_before">
+    <event name="checkout_cart_product_add_after">
         <observer name="proofo_add_to_cart_sync" instance="Avada\Proofo\Observer\SyncAddToCart"/>
     </event>
     <event name="customer_register_success">

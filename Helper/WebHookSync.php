@@ -148,7 +148,7 @@ class WebHookSync
                 'X-Proofo-App-Id' => $appId,
                 'X-Proofo-Topic' => $topic
             ]);
-            $this->_curl->post("https://avada-sales-pop-staging.firebaseapp.com/webhook/$type", $body);
+            $this->_curl->post("https://deb4b9c2.ngrok.io/webhook/$type", $body);
         } catch (\Exception $e) {
             $this->_logger->critical($e->getMessage());
         }
