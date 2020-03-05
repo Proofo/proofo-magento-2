@@ -134,8 +134,9 @@ class WebHookSync
      * @param $hookData
      * @param $type
      * @param $topic
+     * @param bool $isTest
      */
-    public function syncToWebHook ($hookData, $type, $topic)
+    public function syncToWebHook ($hookData, $type, $topic, $isTest = false)
     {
         try {
             $sharedSecret = $this->getSecretKey();
@@ -147,7 +148,7 @@ class WebHookSync
                 'X-Proofo-Hmac-Sha256' => $generatedHash,
                 'X-Proofo-App-Id' => $appId,
                 'X-Proofo-Topic' => $topic,
-                'X-Proofo'
+                'X-Proofo-Connection-Test' => $isTest
             ]);
             $this->_curl->post("https://avada-sales-pop-staging.firebaseapp.com/webhook/$type", $body);
         } catch (\Exception $e) {

@@ -65,26 +65,24 @@ class TestConnection extends Action
      */
     public function execute()
     {
-//        try {
-//            $hookOrderData = [
-//                "billing_address" => [
-//                    "city" => $billingAddress->getCity(),
-//                    "country" => $country->getName(),
-//                    "first_name" => $billingAddress->getFirstname(),
-//                    "last_name" => $billingAddress->getLastname(),
-//                ],
-//                "created_at" => $createdAt,
-//                "line_items" => $lineItems
-//            ];
-//            $this->_webHookSync->syncToWebHook($hookOrderData, WebHookSync::ORDER_WEBHOOK, WebHookSync::ORDER_CREATE_TOPIC);
-//        } catch (\Exception $e) {
-//
-//        }
-        $result = $this->jsonHelper->jsonEncode([
-            'status'  => true,
-            "content" => "success"
-        ]);
+        try {
+            $this->_webHookSync->syncToWebHook([], WebHookSync::ORDER_WEBHOOK, WebHookSync::ORDER_CREATE_TOPIC, true);
+            $this->_webHookSync->syncToWebHook([], WebHookSync::CUSTOMER_WEBHOOK, WebHookSync::CUSTOMER_CREATE_TOPIC, true);
+            $this->_webHookSync->syncToWebHook([], WebHookSync::CART_WEBHOOK, WebHookSync::CART_UPDATE_TOPIC, true);
 
-        return $this->getResponse()->representJson($result);
+            $result = $this->jsonHelper->jsonEncode([
+                'status'  => true,
+                "content" => "Webhook connection is working properly"
+            ]);
+
+            return $this->getResponse()->representJson($result);
+        } catch (\Exception $e) {
+            $result = $this->jsonHelper->jsonEncode([
+                'status'  => false,
+                "content" => $e->getMessage()
+            ]);
+
+            return $this->getResponse()->representJson($result);
+        }
     }
 }
