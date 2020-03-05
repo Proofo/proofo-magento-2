@@ -105,7 +105,8 @@ class SyncOrder implements ObserverInterface
                         /** @var \Magento\Catalog\Model\Product $childProduct */
                         $childProduct = $childItem->getProduct();
                         $lineItems[] = [
-                            "product_name" => $childProduct->getName(),
+                            "title" => $childProduct->getName(),
+                            "quantity" => $item->getQtyOrdered(),
                             "price" => $childProduct->getPrice(),
                             "product_link" => $childProduct->getProductUrl(),
                             "product_image" => $this->_helperData->getProductImage($childProduct),
