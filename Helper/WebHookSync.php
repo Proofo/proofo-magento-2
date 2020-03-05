@@ -146,9 +146,10 @@ class WebHookSync
                 'Content-Type' => 'application/json',
                 'X-Proofo-Hmac-Sha256' => $generatedHash,
                 'X-Proofo-App-Id' => $appId,
-                'X-Proofo-Topic' => $topic
+                'X-Proofo-Topic' => $topic,
+                'X-Proofo'
             ]);
-            $this->_curl->post("https://deb4b9c2.ngrok.io/webhook/$type", $body);
+            $this->_curl->post("https://avada-sales-pop-staging.firebaseapp.com/webhook/$type", $body);
         } catch (\Exception $e) {
             $this->_logger->critical($e->getMessage());
         }
