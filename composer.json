@@ -1,6 +1,6 @@
 {
-  "name": "proofo/module-proofo",
-  "description": "Avada Proofo Social Proof",
+  "name": "avada/module-proofo",
+  "description": "AVADA Proofo Social Proof",
   "type": "magento2-module",
   "version": "1.0.0",
   "license": "proprietary",
@@ -17,7 +17,7 @@
       "registration.php"
     ],
     "psr-4": {
-      "Proofo\\Proofo\\": ""
+      "Avada\\Proofo\\": ""
     }
   }
 }
