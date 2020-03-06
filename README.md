@@ -29,15 +29,16 @@ Run compile if your store in Product mode:
 ```
 php bin/magento setup:di:compile
 ```
-
-## How to use
-
 ### 2. Copy and paste
 If you don't want to install via composer, you can use this way. 
 
 - Download [the latest version here](https://github.com/Proofo/proofo-magento-2/archive/master.zip) 
 - Extract `master.zip` file to `app/code/Avada/Proofo` ; You should create a folder path `app/code/Avada/Proofo` if not exist.
 - Go to Magento root folder and run upgrade command line to install `Avada_Proofo`:
+
+## How to use
+
+See our official documentation here: https://help.avada.io/en-us/category/proofo-social-proof-16ahtap/
 
 ## Information
 - Website: https://proofo.io
