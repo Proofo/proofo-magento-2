@@ -1,6 +1,6 @@
 {
-  "name": "avada/module-proofo",
-  "description": "Avada Proofo Extension",
+  "name": "proofo/module-proofo",
+  "description": "Avada Proofo Social Proof",
   "type": "magento2-module",
   "version": "1.0.0",
   "license": "proprietary",
@@ -8,7 +8,7 @@
     {
       "name": "Avada",
       "email": "support@avada.io",
-      "homepage": "https://www.avada.io",
+      "homepage": "https://avada.io",
       "role": "Technical Support"
     }
   ],
@@ -17,7 +17,7 @@
       "registration.php"
     ],
     "psr-4": {
-      "Avada\\Proofo\\": ""
+      "Proofo\\Proofo\\": ""
     }
   }
 }
