@@ -22,16 +22,16 @@
 /** @var \Avada\Proofo\Block\Adminhtml\System\Config\Button $block */
 ?>
 <div class="actions actions-test-email">
-    <button class="actions-test-email" type="button" id="<?php echo $block->getHtmlId() ?>">
-        <span><?php echo $block->escapeHtml($block->getButtonLabel()) ?></span>
+    <button class="actions-test-email" type="button" id="<?= $block->getHtmlId() ?>">
+        <span><?= $block->escapeHtml($block->getButtonLabel()) ?></span>
     </button>
 </div>
 <script type="text/x-magento-init">
     {
         "#proofo_general_test_connection": {
             "Avada_Proofo/js/testConnection": {
-                "ajaxUrl": "<?php /* @escapeNotVerified */ echo $block->getButtonUrl() ?>",
-                "formKey": "<?php echo $block->getFormKey() ?>"
+                "ajaxUrl": "<?= /* @noEscape */ $block->getButtonUrl() ?>",
+                "formKey": "<?= /* @noEscape */ $block->getFormKey() ?>"
             }
         }
     }

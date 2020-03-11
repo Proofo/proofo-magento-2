@@ -22,9 +22,8 @@ namespace Avada\Proofo\Controller\Adminhtml\Webhook;
 
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
-use \Magento\Framework\Controller\Result\JsonFactory;
-use \Magento\Framework\Json\Helper\Data as JsonHelper;
-use \Avada\Proofo\Helper\WebHookSync;
+use Magento\Framework\Json\Helper\Data as JsonHelper;
+use Avada\Proofo\Helper\WebHookSync;
 
 /**
  * Class TestConnection
@@ -52,8 +51,7 @@ class TestConnection extends Action
         Context $context,
         JsonHelper $jsonHelper,
         WebHookSync $webHookSync
-    )
-    {
+    ) {
         $this->jsonHelper = $jsonHelper;
         $this->_webHookSync = $webHookSync;
 
@@ -71,18 +69,17 @@ class TestConnection extends Action
             $this->_webHookSync->syncToWebHook([], WebHookSync::CART_WEBHOOK, WebHookSync::CART_UPDATE_TOPIC, true);
 
             $result = $this->jsonHelper->jsonEncode([
-                'status'  => true,
-                "content" => "Webhook connection is working properly"
+                'status' => true,
+                'content' => __('Webhook connection is working properly.')
             ]);
 
-            return $this->getResponse()->representJson($result);
         } catch (\Exception $e) {
             $result = $this->jsonHelper->jsonEncode([
-                'status'  => false,
-                "content" => $e->getMessage()
+                'status' => false,
+                'content' => $e->getMessage()
             ]);
-
-            return $this->getResponse()->representJson($result);
         }
+
+        return $this->getResponse()->representJson($result);
     }
 }

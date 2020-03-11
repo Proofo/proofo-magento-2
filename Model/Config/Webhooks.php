@@ -21,18 +21,16 @@
 
 namespace Avada\Proofo\Model\Config;
 
-use Magento\Framework\Option\ArrayInterface;
+use Magento\Framework\Data\OptionSourceInterface;
 
 /**
  * Class Webhooks
  * @package Avada\Proofo\Model\Config
  */
-class Webhooks implements ArrayInterface
+class Webhooks implements OptionSourceInterface
 {
-    const ORDER_HOOK = 'orders_hook';
-
-    const CART_HOOK = 'cart_hook';
-
+    const ORDER_HOOK  = 'orders_hook';
+    const CART_HOOK   = 'cart_hook';
     const SIGNUP_HOOK = 'signup_hook';
 
     /**
@@ -42,7 +40,7 @@ class Webhooks implements ArrayInterface
     {
         $optionArray = [];
 
-        foreach ($this->toArray() as $key => $value) {
+        foreach ($this->getOptionArray() as $key => $value) {
             $optionArray[] = ['value' => $key, 'label' => $value];
         }
 
@@ -54,11 +52,11 @@ class Webhooks implements ArrayInterface
      *
      * @return array
      */
-    public function toArray()
+    public function getOptionArray()
     {
         return [
-            self::ORDER_HOOK => __('New Order'),
-            self::CART_HOOK => __('Customer Add item to cart'),
+            self::ORDER_HOOK  => __('New Order'),
+            self::CART_HOOK   => __('Customer Add item to cart'),
             self::SIGNUP_HOOK => __('New Customer')
         ];
     }

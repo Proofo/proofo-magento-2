@@ -35,7 +35,7 @@ if ($block->isEnabled()) : ?>
         x.parentNode.insertBefore(s,x);
     })(
         "https://avada-sales-pop-staging.firebaseapp.com/sdk/proofo-sdk.min.js",
-        "<?= $block->getAppId() ?>",
+        "<?= /* @noEscape */ $block->getAppId() ?>",
         'magento'
     );</script>
 <?php endif; ?>
