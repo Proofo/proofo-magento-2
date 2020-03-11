@@ -21,14 +21,17 @@
 
 namespace Avada\Proofo\Observer;
 
+use Exception;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use Avada\Proofo\Helper\Data as Helper;
-use \Magento\Directory\Model\CountryFactory;
-use \Magento\Checkout\Model\Cart;
-use \Avada\Proofo\Helper\WebHookSync;
+use Avada\Proofo\Helper\WebHookSync;
 use Avada\Proofo\Model\Config\Webhooks;
 
+/**
+ * Class NewCustomer
+ * @package Avada\Proofo\Observer
+ */
 class NewCustomer implements ObserverInterface
 {
     /**
@@ -37,38 +40,20 @@ class NewCustomer implements ObserverInterface
     protected $_helperData;
 
     /**
-     * @var CountryFactory
-     */
-    protected $_countryFactory;
-
-    /**
-     * @var Cart
-     */
-    protected $_cart;
-
-    /**
      * @var WebHookSync
      */
     protected $_webHookSync;
 
     /**
      * NewCustomer constructor.
-     *
      * @param Helper $helper
-     * @param CountryFactory $countryFactory
-     * @param Cart $cart
      * @param WebHookSync $webHookSync
      */
     public function __construct(
         Helper $helper,
-        CountryFactory $countryFactory,
-        Cart $cart,
         WebHookSync $webHookSync
-    )
-    {
-        $this->_helperData = $helper;
-        $this->_countryFactory = $countryFactory;
-        $this->_cart = $cart;
+    ) {
+        $this->_helperData  = $helper;
         $this->_webHookSync = $webHookSync;
     }
 
@@ -84,22 +69,27 @@ class NewCustomer implements ObserverInterface
             }
 
             $enabledWebHooks = $this->_helperData->getEnabledWebHooks();
-            if (!in_array(Webhooks::SIGNUP_HOOK, $enabledWebHooks)) {
+            if (!in_array(Webhooks::SIGNUP_HOOK, $enabledWebHooks, true)) {
                 return $this;
             }
+
             /**
-             * @var $customer \Magento\Customer\Model\Data\Customer
+             * @var \Magento\Customer\Model\Data\Customer $customer
              */
             $customer = $observer->getEvent()->getCustomer();
             $hookData = [
-                "id" => $customer->getId(),
-                "email" => $customer->getEmail(),
-                "created_at" => date("c"),
-                "first_name" => $customer->getFirstname(),
-                "last_name" => $customer->getLastname()
+                'id' => $customer->getId(),
+                'email' => $customer->getEmail(),
+                'created_at' => date('c'),
+                'first_name' => $customer->getFirstname(),
+                'last_name' => $customer->getLastname()
             ];
-            $this->_webHookSync->syncToWebHook($hookData, WebHookSync::CUSTOMER_WEBHOOK, WebHookSync::CUSTOMER_CREATE_TOPIC);
-        } catch (\Exception $e) {
+            $this->_webHookSync->syncToWebHook(
+                $hookData,
+                WebHookSync::CUSTOMER_WEBHOOK,
+                WebHookSync::CUSTOMER_CREATE_TOPIC
+            );
+        } catch (Exception $e) {
             $this->_helperData->criticalLog($e->getMessage());
         }
     }

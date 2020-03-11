@@ -21,22 +21,27 @@
 
 namespace Avada\Proofo\Helper;
 
-use \Magento\Store\Model\StoreManagerInterface;
+use Magento\Framework\UrlInterface;
+use Magento\Store\Model\StoreManagerInterface;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Helper\Context;
 use Magento\Framework\App\Area;
 use Magento\Store\Model\ScopeInterface;
 
+/**
+ * Class Data
+ * @package Avada\Proofo\Helper
+ */
 class Data extends AbstractHelper
 {
     /**
-     * @type \Magento\Store\Model\StoreManagerInterface
+     * @var StoreManagerInterface
      */
     protected $storeManager;
 
     /**
-     * @type \Magento\Framework\ObjectManagerInterface
+     * @var ObjectManagerInterface
      */
     protected $objectManager;
 
@@ -46,9 +51,9 @@ class Data extends AbstractHelper
     protected $isArea = [];
 
     /**
-     * @var \Magento\Backend\App\Config
+     * @var null
      */
-    protected $backendConfig;
+    protected $backendConfig = null;
 
     /**
      * Data constructor.
@@ -61,9 +66,8 @@ class Data extends AbstractHelper
         Context $context,
         StoreManagerInterface $storeManager,
         ObjectManagerInterface $objectManager
-    )
-    {
-        $this->storeManager = $storeManager;
+    ) {
+        $this->storeManager  = $storeManager;
         $this->objectManager = $objectManager;
 
         parent::__construct($context);
@@ -82,73 +86,73 @@ class Data extends AbstractHelper
      * @return mixed
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    public function getSecretKey() {
-        $storeId = $this->getStoreId();
-
-        return $this->getConfigValue('proofo/general/secret_key', $storeId);
+    public function getSecretKey()
+    {
+        return $this->getConfigValue('proofo/general/secret_key', $this->getStoreId());
     }
 
     /**
      * @return mixed
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    public function getAppId() {
-        $storeId = $this->getStoreId();
-
-        return $this->getConfigValue('proofo/general/app_id', $storeId);
+    public function getAppId()
+    {
+        return $this->getConfigValue('proofo/general/app_id', $this->getStoreId());
     }
 
     /**
      * @return mixed
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    public function getEnabledWebHooks() {
-        $storeId = $this->getStoreId();
-        $configValues = $this->getConfigValue('proofo/webhook/enabled_webhooks', $storeId);
+    public function getEnabledWebHooks()
+    {
+        $configValues = $this->getConfigValue('proofo/webhook/enabled_webhooks', $this->getStoreId());
 
         return $configValues ? preg_split("/\,/", $configValues) : [];
     }
 
-    public function getBundleAsMultipleItems() {
-        $storeId = $this->getStoreId();
-
-        return $this->getConfigValue('proofo/webhook/bundle_as_multiple', $storeId);
+    /**
+     * @return array|mixed
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    public function getBundleAsMultipleItems()
+    {
+        return $this->getConfigValue('proofo/webhook/bundle_as_multiple', $this->getStoreId());
     }
 
     /**
-     * @param $product \Magento\Catalog\Model\Product
+     * @param \Magento\Catalog\Model\Product $product
      * @return mixed
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
     public function getProductImage($product)
     {
-        $imageUrl = $this->storeManager->getStore()->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA) . 'catalog/product' . $product->getImage();
+        $baseUrl  = $this->storeManager->getStore()->getBaseUrl(UrlInterface::URL_TYPE_MEDIA);
+        $imageUrl = $baseUrl . 'catalog/product/' . $product->getImage();
 
         return str_replace('\\', '/', $imageUrl);
     }
 
     /**
-     * @param $message
+     * @param string $message
      * @return null|void
      */
-    public function criticalLog($message) {
+    public function criticalLog($message)
+    {
         $this->_logger->critical($message);
     }
 
     /**
-     * @param null $storeId
      * @return array|bool|mixed
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    public function isEnabled($storeId = null)
+    public function isEnabled()
     {
-        $storeId = $this->getStoreId();
-
-        return $this->getConfigValue('proofo/general/enabled', $storeId);
+        return $this->getConfigValue('proofo/general/enabled', $this->getStoreId());
     }
 
     /**
-     * @param $field
+     * @param string $field
      * @param null $scopeValue
      * @param string $scopeType
      *

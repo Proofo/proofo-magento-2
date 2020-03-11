@@ -63,14 +63,14 @@
             </group>
             <group id="webhook" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Sync</label>
-                <field id="enabled_webhooks" translate="label comment" type="multiselect" sortOrder="25" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="enabled_webhooks" translate="label" type="multiselect" sortOrder="25" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>When sync to Proofo</label>
                     <source_model>Avada\Proofo\Model\Config\Webhooks</source_model>
                     <depends>
                         <field id="enabled">1</field>
                     </depends>
                 </field>
-                <field id="bundle_as_multiple" translate="label comment" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="bundle_as_multiple" translate="label" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Sync bundle product as multiple items</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <depends>

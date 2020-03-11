@@ -20,11 +20,8 @@
  * @license     https://www.avada.io/LICENSE.txt
  */
 -->
-<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
-    <event name="checkout_cart_product_add_after">
-        <observer name="proofo_add_to_cart_sync" instance="Avada\Proofo\Observer\SyncAddToCart"/>
-    </event>
-    <event name="customer_register_success">
-        <observer name="proofo_new_customer_sync" instance="Avada\Proofo\Observer\NewCustomer"/>
-    </event>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\Quote\Model\QuoteManagement">
+        <plugin name="avada_hook_order" type="Avada\Proofo\Plugin\SyncOrder"/>
+    </type>
 </config>

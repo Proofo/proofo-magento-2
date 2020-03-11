@@ -21,11 +21,10 @@
 
 namespace Avada\Proofo\Helper;
 
-use \Magento\Framework\HTTP\Client\Curl;
-use \Magento\Framework\Json\Helper\Data;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\HTTP\Client\Curl;
+use Magento\Framework\Json\Helper\Data;
 use Avada\Proofo\Helper\Data as Helper;
-use Magento\Setup\Exception;
-use \Psr\Log\LoggerInterface as Logger;
 
 /**
  * Class WebHookSync
@@ -34,17 +33,12 @@ use \Psr\Log\LoggerInterface as Logger;
  */
 class WebHookSync
 {
-    const CART_WEBHOOK = "cart";
-
-    const ORDER_WEBHOOK = "order";
-
-    const CUSTOMER_WEBHOOK = "customer";
-
-    const CART_UPDATE_TOPIC = "cart/update";
-
-    const ORDER_CREATE_TOPIC = "order/create";
-
-    const CUSTOMER_CREATE_TOPIC = "customer/create";
+    const CART_WEBHOOK          = 'cart';
+    const ORDER_WEBHOOK         = 'order';
+    const CUSTOMER_WEBHOOK      = 'customer';
+    const CART_UPDATE_TOPIC     = 'cart/update';
+    const ORDER_CREATE_TOPIC    = 'order/create';
+    const CUSTOMER_CREATE_TOPIC = 'customer/create';
 
     /**
      * @var Curl
@@ -62,19 +56,12 @@ class WebHookSync
     protected $_helperData;
 
     /**
-     * @var Logger
-     */
-    protected $_logger;
-
-    /**
-     * @var $_secretKey
-     * @cache
+     * @var null
      */
     protected $_secretKey = null;
 
     /**
-     * @var $_appId
-     * @cache
+     * @var null
      */
     protected $_appId = null;
 
@@ -84,32 +71,25 @@ class WebHookSync
      * @param Curl $curl
      * @param Data $jsonHelper
      * @param Helper $helper
-     * @param Logger $logger
      */
     public function __construct(
         Curl $curl,
         Data $jsonHelper,
-        Helper $helper,
-        Logger $logger
-    )
-    {
-        $this->_curl = $curl;
-        $this->jsonHelper = $jsonHelper;
+        Helper $helper
+    ) {
+        $this->_curl       = $curl;
+        $this->jsonHelper  = $jsonHelper;
         $this->_helperData = $helper;
-        $this->_logger = $logger;
     }
 
     /**
      * @return mixed|null
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    public function getSecretKey ()
+    public function getSecretKey()
     {
         if (!$this->_secretKey) {
-            $secretKey = $this->_helperData->getSecretKey();
-            $this->_secretKey = $secretKey;
-
-            return $secretKey;
+            $this->_secretKey = $this->_helperData->getSecretKey();
         }
 
         return $this->_secretKey;
@@ -119,43 +99,41 @@ class WebHookSync
      * @return mixed|null
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    public function getAppId ()
+    public function getAppId()
     {
         if (!$this->_appId) {
-            $appId = $this->_helperData->getAppId();
-            $this->_appId = $appId;
-
-            return $appId;
+            $this->_appId = $this->_helperData->getAppId();
         }
 
         return $this->_appId;
     }
 
     /**
-     * @param $hookData
-     * @param $type
-     * @param $topic
+     * @param array $hookData
+     * @param string $type
+     * @param string $topic
      * @param bool $isTest
+     * @throws LocalizedException
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    public function syncToWebHook ($hookData, $type, $topic, $isTest = false)
+    public function syncToWebHook($hookData, $type, $topic, $isTest = false)
     {
-        $sharedSecret = $this->getSecretKey();
-        $appId = $this->getAppId();
-        $body = $this->jsonHelper->jsonEncode($hookData);
+        $sharedSecret  = $this->getSecretKey();
+        $appId         = $this->getAppId();
+        $body          = $this->jsonHelper->jsonEncode($hookData);
         $generatedHash = base64_encode(hash_hmac('sha256', $body, $sharedSecret, true));
         $this->_curl->setHeaders([
-            'Content-Type' => 'application/json',
-            'X-Proofo-Hmac-Sha256' => $generatedHash,
-            'X-Proofo-App-Id' => $appId,
-            'X-Proofo-Topic' => $topic,
-            'X-Proofo-Connection-Test' => $isTest
-        ]);
+                                     'Content-Type' => 'application/json',
+                                     'X-Proofo-Hmac-Sha256' => $generatedHash,
+                                     'X-Proofo-App-Id' => $appId,
+                                     'X-Proofo-Topic' => $topic,
+                                     'X-Proofo-Connection-Test' => $isTest
+                                 ]);
         $this->_curl->post("https://avada-sales-pop-staging.firebaseapp.com/webhook/$type", $body);
         if ($this->_curl->getStatus() !== 200) {
-            $body = $this->_curl->getBody();
+            $body     = $this->_curl->getBody();
             $bodyData = $this->jsonHelper->jsonDecode($body);
-            throw new \Exception($bodyData['message']);
+            throw new LocalizedException(__($bodyData['message']));
         }
     }
 }

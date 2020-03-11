@@ -21,12 +21,12 @@
 
 namespace Avada\Proofo\Observer;
 
+use Exception;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use Avada\Proofo\Helper\Data as Helper;
-use \Magento\Directory\Model\CountryFactory;
-use \Magento\Checkout\Model\Cart;
-use \Avada\Proofo\Helper\WebHookSync;
+use Magento\Checkout\Model\Cart;
+use Avada\Proofo\Helper\WebHookSync;
 use Avada\Proofo\Model\Config\Webhooks;
 
 /**
@@ -43,11 +43,6 @@ class SyncAddToCart implements ObserverInterface
     protected $_helperData;
 
     /**
-     * @var CountryFactory
-     */
-    protected $_countryFactory;
-
-    /**
      * @var Cart
      */
     protected $_cart;
@@ -59,22 +54,17 @@ class SyncAddToCart implements ObserverInterface
 
     /**
      * SyncAddToCart constructor.
-     *
      * @param Helper $helper
-     * @param CountryFactory $countryFactory
      * @param Cart $cart
      * @param WebHookSync $webHookSync
      */
     public function __construct(
         Helper $helper,
-        CountryFactory $countryFactory,
         Cart $cart,
         WebHookSync $webHookSync
-    )
-    {
-        $this->_helperData = $helper;
-        $this->_countryFactory = $countryFactory;
-        $this->_cart = $cart;
+    ) {
+        $this->_helperData  = $helper;
+        $this->_cart        = $cart;
         $this->_webHookSync = $webHookSync;
     }
 
@@ -90,61 +80,65 @@ class SyncAddToCart implements ObserverInterface
             }
 
             $enabledWebHooks = $this->_helperData->getEnabledWebHooks();
-            if (!in_array(Webhooks::CART_HOOK, $enabledWebHooks)) {
+            if (!in_array(Webhooks::CART_HOOK, $enabledWebHooks, true)) {
                 return $this;
             }
 
             /**
-             * @var $product \Magento\Catalog\Model\Product
+             * @var \Magento\Catalog\Model\Product $product
              */
             $product = $observer->getEvent()->getProduct();
+
             /**
-             * @var $quoteItem \Magento\Quote\Model\Quote\Item|string
+             * @var \Magento\Quote\Model\Quote\Item|string $quoteItem
              */
             $quoteItem = $observer->getEvent()->getQuoteItem();
-            $quote = $this->_cart->getQuote();
+            $quote     = $this->_cart->getQuote();
 
-            if (intval($quoteItem->getQty()) === 1) {
+            if ((int)$quoteItem->getQty() === 1) {
                 $addedProducts = [];
-                if (
-                    $quoteItem->getHasChildren() &&
+                if ($quoteItem->getHasChildren() &&
                     $quoteItem->isChildrenCalculated() &&
                     $this->_helperData->getBundleAsMultipleItems()
                 ) {
-                    /** @var \Magento\Sales\Model\Order\Item $child */
+                    /** @var \Magento\Sales\Model\Order\Item $childItem */
                     foreach ($quoteItem->getChildren() as $childItem) {
                         if ($childItem->getQtyOrdered() === 0) continue;
 
-                        $childProduct = $childItem->getProduct();
+                        $childProduct    = $childItem->getProduct();
                         $addedProducts[] = [
-                            "product_name" => $childProduct->getName(),
-                            "price" => $childProduct->getPrice(),
-                            "product_link" => $childProduct->getProductUrl(),
-                            "product_image" => $this->_helperData->getProductImage($childProduct),
-                            "product_id" => $childProduct->getId()
+                            'product_name'  => $childProduct->getName(),
+                            'price'         => $childProduct->getPrice(),
+                            'product_link'  => $childProduct->getProductUrl(),
+                            'product_image' => $this->_helperData->getProductImage($childProduct),
+                            'product_id'    => $childProduct->getId()
                         ];
                     }
                 } else {
                     $addedProducts[] = [
-                        "product_name" => $product->getName(),
-                        "price" => $product->getPrice(),
-                        "product_link" => $product->getProductUrl(),
-                        "product_image" => $this->_helperData->getProductImage($product),
-                        "product_id" => $product->getId()
+                        'product_name'  => $product->getName(),
+                        'price'         => $product->getPrice(),
+                        'product_link'  => $product->getProductUrl(),
+                        'product_image' => $this->_helperData->getProductImage($product),
+                        'product_id'    => $product->getId()
                     ];
                 }
 
                 $updatedAt = $quote->getUpdatedAt() === null
-                    ? date("c")
-                    : date("c", strtotime($quote->getUpdatedAt()));
-                $hookData = [
-                    "id" => $quote->getId(),
-                    "updated_at" => $updatedAt,
-                    "line_items" => $addedProducts
+                    ? date('c')
+                    : date('c', strtotime($quote->getUpdatedAt()));
+                $hookData  = [
+                    'id'         => $quote->getId(),
+                    'updated_at' => $updatedAt,
+                    'line_items' => $addedProducts
                 ];
-                $this->_webHookSync->syncToWebHook($hookData, WebHookSync::CART_WEBHOOK, WebHookSync::CART_UPDATE_TOPIC);
+                $this->_webHookSync->syncToWebHook(
+                    $hookData,
+                    WebHookSync::CART_WEBHOOK,
+                    WebHookSync::CART_UPDATE_TOPIC
+                );
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->_helperData->criticalLog($e->getMessage());
         }
     }
