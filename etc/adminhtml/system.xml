@@ -63,6 +63,15 @@
             </group>
             <group id="webhook" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Sync</label>
+                <field id="sync_manually" translate="label" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label></label>
+                    <button_label>Sync orders manually</button_label>
+                    <button_url>proofo/webhook/sync</button_url>
+                    <frontend_model>\Avada\Proofo\Block\Adminhtml\System\Config\Sync</frontend_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
                 <field id="enabled_webhooks" translate="label" type="multiselect" sortOrder="25" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>When sync to Proofo</label>
                     <source_model>Avada\Proofo\Model\Config\Webhooks</source_model>

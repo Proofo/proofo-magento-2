@@ -33,12 +33,14 @@ use Avada\Proofo\Helper\Data as Helper;
  */
 class WebHookSync
 {
-    const CART_WEBHOOK          = 'cart';
-    const ORDER_WEBHOOK         = 'order';
-    const CUSTOMER_WEBHOOK      = 'customer';
-    const CART_UPDATE_TOPIC     = 'cart/update';
-    const ORDER_CREATE_TOPIC    = 'order/create';
+    const CART_WEBHOOK = 'cart';
+    const ORDER_WEBHOOK = 'order';
+    const CUSTOMER_WEBHOOK = 'customer';
+    const CART_UPDATE_TOPIC = 'cart/update';
+    const ORDER_CREATE_TOPIC = 'order/create';
     const CUSTOMER_CREATE_TOPIC = 'customer/create';
+
+    const APP_URL = "avada-sales-pop-staging.firebaseapp.com";
 
     /**
      * @var Curl
@@ -76,9 +78,10 @@ class WebHookSync
         Curl $curl,
         Data $jsonHelper,
         Helper $helper
-    ) {
-        $this->_curl       = $curl;
-        $this->jsonHelper  = $jsonHelper;
+    )
+    {
+        $this->_curl = $curl;
+        $this->jsonHelper = $jsonHelper;
         $this->_helperData = $helper;
     }
 
@@ -118,21 +121,49 @@ class WebHookSync
      */
     public function syncToWebHook($hookData, $type, $topic, $isTest = false)
     {
-        $sharedSecret  = $this->getSecretKey();
-        $appId         = $this->getAppId();
-        $body          = $this->jsonHelper->jsonEncode($hookData);
+        $url = self::APP_URL;
+        $sharedSecret = $this->getSecretKey();
+        $appId = $this->getAppId();
+        $body = $this->jsonHelper->jsonEncode($hookData);
         $generatedHash = base64_encode(hash_hmac('sha256', $body, $sharedSecret, true));
         $this->_curl->setHeaders([
-                                     'Content-Type' => 'application/json',
-                                     'X-Proofo-Hmac-Sha256' => $generatedHash,
-                                     'X-Proofo-App-Id' => $appId,
-                                     'X-Proofo-Topic' => $topic,
-                                     'X-Proofo-Connection-Test' => $isTest
-                                 ]);
-        $this->_curl->post("https://avada-sales-pop-staging.firebaseapp.com/webhook/$type", $body);
+            'Content-Type' => 'application/json',
+            'X-Proofo-Hmac-Sha256' => $generatedHash,
+            'X-Proofo-App-Id' => $appId,
+            'X-Proofo-Topic' => $topic,
+            'X-Proofo-Connection-Test' => $isTest
+        ]);
+        $this->_curl->post("https://$url/webhook/$type", $body);
         if ($this->_curl->getStatus() !== 200) {
-            $body     = $this->_curl->getBody();
+            $body = $this->_curl->getBody();
             $bodyData = $this->jsonHelper->jsonDecode($body);
+            throw new LocalizedException(__($bodyData['message']));
+        }
+    }
+
+    /**
+     * @param $items
+     * @throws LocalizedException
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    public function syncOrders($items)
+    {
+        $url = self::APP_URL;
+        $sharedSecret = $this->getSecretKey();
+        $appId = $this->getAppId();
+        $body = $this->jsonHelper->jsonEncode($items);
+        $generatedHash = base64_encode(hash_hmac('sha256', $body, $sharedSecret, true));
+
+        $this->_curl->setHeaders([
+            'Content-Type' => 'application/json',
+            'X-Proofo-Hmac-Sha256' => $generatedHash,
+            'X-Proofo-App-Id' => $appId
+        ]);
+
+        $this->_curl->post("https://$url/webhook/sync/orders", $body);
+        $body = $this->_curl->getBody();
+        $bodyData = $this->jsonHelper->jsonDecode($body);
+        if (!$bodyData['success']) {
             throw new LocalizedException(__($bodyData['message']));
         }
     }
