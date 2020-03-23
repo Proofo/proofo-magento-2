@@ -63,7 +63,6 @@ class Sync extends Action
 
     /**
      * Sync constructor.
-     *
      * @param Context $context
      * @param JsonHelper $jsonHelper
      * @param WebHookSync $webHookSync
@@ -78,39 +77,41 @@ class Sync extends Action
         OrderFactory $orderFactory,
         ProofoHelper $helper,
         CountryFactory $countryFactory
-    )
-    {
-        $this->jsonHelper = $jsonHelper;
-        $this->_webHookSync = $webHookSync;
+    ) {
+        $this->jsonHelper              = $jsonHelper;
+        $this->_webHookSync            = $webHookSync;
         $this->_orderCollectionFactory = $orderFactory;
-        $this->_helperData = $helper;
-        $this->_countryFactory = $countryFactory;
+        $this->_helperData             = $helper;
+        $this->_countryFactory         = $countryFactory;
 
         parent::__construct($context);
     }
 
-
+    /**
+     * @return \Magento\Framework\App\ResponseInterface|\Magento\Framework\Controller\ResultInterface
+     */
     public function execute()
     {
         try {
             $orders = $this->_orderCollectionFactory->create()
-                ->addFieldToSelect('*')
-                ->setOrder(
-                    'created_at',
-                    'desc'
-                );
+                                                    ->addFieldToSelect('*')
+                                                    ->setOrder(
+                                                        'entity_id',
+                                                        'desc'
+                                                    );
+            $orders->getSelect()->limit(30);
 
             $items = [];
             /**
              * @var Order $order
              */
             foreach ($orders as $order) {
-                if (count($items) >= 30) {
-                    break;
-                }
-
                 $orderLineItems = $order->getAllVisibleItems();
                 $billingAddress = $order->getBillingAddress();
+                if (!$billingAddress) {
+                    continue;
+                }
+
                 $country = $this->_countryFactory->create()->load($billingAddress->getCountryId());
                 /**
                  * @var \Magento\Sales\Model\Order\Item $item
@@ -124,7 +125,7 @@ class Sync extends Action
                         foreach ($item->getChildrenItems() as $childItem) {
                             /** @var \Magento\Catalog\Model\Product $childProduct */
                             $childProduct = $childItem->getProduct();
-                            $items[] = $this->formatItemData($childProduct, $billingAddress, $country, $order);
+                            $items[]      = $this->formatItemData($childProduct, $billingAddress, $country, $order);
                         }
                     } else {
                         $product = $item->getProduct();
@@ -138,7 +139,7 @@ class Sync extends Action
             $this->_webHookSync->syncOrders($items);
             $result = $this->jsonHelper->jsonEncode([
                 'status' => true,
-                'content' => "Sync successfully"
+                'content' => __('Sync successfully')
             ]);
             return $this->getResponse()->representJson($result);
         } catch (\Exception $e) {
@@ -152,8 +153,8 @@ class Sync extends Action
 
     /**
      * @param \Magento\Catalog\Model\Product $product
-     * @param $billingAddress
-     * @param $country
+     * @param \Magento\Sales\Api\Data\OrderAddressInterface $billingAddress
+     * @param \Magento\Directory\Model\Country $country
      * @param Order $order
      * @return array
      * @throws \Magento\Framework\Exception\NoSuchEntityException
@@ -161,16 +162,16 @@ class Sync extends Action
     public function formatItemData($product, $billingAddress, $country, $order)
     {
         return [
-            'product_name' => $product->getName(),
+            'product_name'  => $product->getName(),
             'product_image' => $this->_helperData->getProductImage($product),
-            'product_link' => $product->getProductUrl(),
-            'product_id' => $product->getId(),
-            'first_name' => $order->getCustomerFirstname(),
-            'date' => $order->getCreatedAt() === null
+            'product_link'  => $product->getProductUrl(),
+            'product_id'    => $product->getId(),
+            'first_name'    => $order->getCustomerFirstname(),
+            'date'          => $order->getCreatedAt() === null
                 ? date('c')
                 : date('c', strtotime($order->getCreatedAt())),
-            'city' => $billingAddress->getCity(),
-            'country' => $country->getName()
+            'city'          => $billingAddress->getCity(),
+            'country'       => $country->getName()
         ];
     }
 }

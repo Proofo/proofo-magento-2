@@ -24,6 +24,7 @@ namespace Avada\Proofo\Block;
 use Magento\Framework\View\Element\Template;
 use \Magento\Framework\View\Element\Template\Context;
 use Avada\Proofo\Helper\Data;
+use Avada\Proofo\Helper\WebHookSync;
 
 /**
  * Class Snippet
@@ -68,5 +69,13 @@ class Snippet extends Template
     public function isEnabled()
     {
         return $this->helperData->isEnabled();
+    }
+
+    /**
+     * @return string
+     */
+    public function getAppUrl()
+    {
+        return WebHookSync::APP_URL;
     }
 }
