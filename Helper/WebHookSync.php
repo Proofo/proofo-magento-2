@@ -40,7 +40,7 @@ class WebHookSync
     const ORDER_CREATE_TOPIC = 'order/create';
     const CUSTOMER_CREATE_TOPIC = 'customer/create';
 
-    const APP_URL = "avada-sales-pop-staging.firebaseapp.com";
+    const APP_URL = "app.proofo.io";
 
     /**
      * @var Curl
