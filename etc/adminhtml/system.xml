@@ -39,7 +39,7 @@
                 </field>
                 <field id="app_id" translate="label comment" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>App ID</label>
-                    <comment><![CDATA[App ID from Proofo backend. Get <a href="https://app.proofo.io/" target="_blank">App ID here</a>.]]></comment>
+                    <comment><![CDATA[App ID from Proofo backend. Get <a href="https://app.proofo.io/manage/keys" target="_blank">App ID here</a>.]]></comment>
                     <depends>
                         <field id="enabled">1</field>
                     </depends>
