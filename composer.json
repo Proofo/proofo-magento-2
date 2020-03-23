@@ -1,6 +1,6 @@
 {
   "name": "avada/module-proofo",
-  "description": "AVADA Proofo Social Proof",
+  "description": "Proofo Social Proof",
   "type": "magento2-module",
   "version": "1.0.0",
   "license": "proprietary",
