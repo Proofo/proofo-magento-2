@@ -93,8 +93,10 @@ class Sync extends Action
     public function execute()
     {
         try {
+            $storeId = $this->getRequest()->getPost()->get("storeId");
             $orders = $this->_orderCollectionFactory->create()
                                                     ->addFieldToSelect('*')
+                                                    ->addFieldToFilter("store_id", $storeId)
                                                     ->setOrder(
                                                         'entity_id',
                                                         'desc'
@@ -135,8 +137,7 @@ class Sync extends Action
                     }
                 }
             }
-
-            $this->_webHookSync->syncOrders($items);
+            $this->_webHookSync->syncOrders($items, $storeId);
             $result = $this->jsonHelper->jsonEncode([
                 'status' => true,
                 'content' => __('Sync successfully')
@@ -166,7 +167,7 @@ class Sync extends Action
             'product_image' => $this->_helperData->getProductImage($product),
             'product_link'  => $product->getProductUrl(),
             'product_id'    => $product->getId(),
-            'first_name'    => $order->getCustomerFirstname(),
+            'first_name'    => $billingAddress->getFirstname(),
             'date'          => $order->getCreatedAt() === null
                 ? date('c')
                 : date('c', strtotime($order->getCreatedAt())),

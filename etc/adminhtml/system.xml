@@ -25,7 +25,7 @@
         <tab id="proofo" translate="label" sortOrder="402">
             <label>Social Proof</label>
         </tab>
-        <section id="proofo" translate="label" type="text" sortOrder="400" showInDefault="1">
+        <section id="proofo" translate="label" type="text" sortOrder="400" showInDefault="1" showInWebsite="1" showInStore="1">
             <class>separator-top</class>
             <label>Accounts</label>
             <tab>proofo</tab>

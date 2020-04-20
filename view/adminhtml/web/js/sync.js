@@ -40,10 +40,12 @@ define([
         },
 
         _ajaxSubmit: function () {
+            var storeId = $("#store_switcher").val()
             $.ajax({
                 url: this.options.ajaxUrl,
                 data: {
-                    "form_key": this.options.formKey
+                    "form_key": this.options.formKey,
+                    "storeId": storeId
                 },
                 dataType: 'json',
                 showLoader: true,

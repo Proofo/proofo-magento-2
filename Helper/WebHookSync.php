@@ -84,26 +84,28 @@ class WebHookSync
     }
 
     /**
+     * @param number $storeId
      * @return mixed|null
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    public function getSecretKey()
+    public function getSecretKey($storeId)
     {
         if (!$this->_secretKey) {
-            $this->_secretKey = $this->_helperData->getSecretKey();
+            $this->_secretKey = $this->_helperData->getSecretKey($storeId);
         }
 
         return $this->_secretKey;
     }
 
     /**
+     * @param number $storeId
      * @return mixed|null
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    public function getAppId()
+    public function getAppId($storeId)
     {
         if (!$this->_appId) {
-            $this->_appId = $this->_helperData->getAppId();
+            $this->_appId = $this->_helperData->getAppId($storeId);
         }
 
         return $this->_appId;
@@ -125,12 +127,13 @@ class WebHookSync
         $body          = $this->jsonHelper->jsonEncode($hookData);
         $generatedHash = base64_encode(hash_hmac('sha256', $body, $sharedSecret, true));
         $this->_curl->setHeaders([
-                                     'Content-Type'             => 'application/json',
-                                     'X-Proofo-Hmac-Sha256'     => $generatedHash,
-                                     'X-Proofo-App-Id'          => $appId,
-                                     'X-Proofo-Topic'           => $topic,
-                                     'X-Proofo-Connection-Test' => $isTest
-                                 ]);
+             'Content-Type'             => 'application/json',
+             'X-Proofo-Hmac-Sha256'     => $generatedHash,
+             'X-Proofo-App-Id'          => $appId,
+             'X-Proofo-Topic'           => $topic,
+             'X-Proofo-Connection-Test' => $isTest,
+             'X-Proofo-Source'          => 'magento'
+         ]);
         $this->_curl->post("$url/webhook/$type", $body);
         if ($this->_curl->getStatus() !== 200) {
             $body     = $this->_curl->getBody();
@@ -141,22 +144,24 @@ class WebHookSync
 
     /**
      * @param array $items
+     * @param number $storeId
      * @throws LocalizedException
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    public function syncOrders($items)
+    public function syncOrders($items, $storeId = null)
     {
         $url           = self::APP_URL;
-        $sharedSecret  = $this->getSecretKey();
-        $appId         = $this->getAppId();
+        $sharedSecret  = $this->getSecretKey($storeId);
+        $appId         = $this->getAppId($storeId);
         $body          = $this->jsonHelper->jsonEncode($items);
         $generatedHash = base64_encode(hash_hmac('sha256', $body, $sharedSecret, true));
 
         $this->_curl->setHeaders([
-                                     'Content-Type'         => 'application/json',
-                                     'X-Proofo-Hmac-Sha256' => $generatedHash,
-                                     'X-Proofo-App-Id'      => $appId
-                                 ]);
+             'Content-Type'         => 'application/json',
+             'X-Proofo-Hmac-Sha256' => $generatedHash,
+             'X-Proofo-App-Id'      => $appId,
+             'X-Proofo-Source'      => 'magento'
+         ]);
 
         $this->_curl->post("$url/webhook/sync/orders", $body);
         $body     = $this->_curl->getBody();

@@ -74,31 +74,40 @@ class Data extends AbstractHelper
     }
 
     /**
+     * @param number $storeId
      * @return int
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    public function getStoreId()
+    public function getStoreId($storeId = null)
     {
+        if ($storeId !== null && $storeId !== 0) {
+            return $storeId;
+        }
+
         return $this->storeManager->getStore()->getId();
     }
 
     /**
+     * @param number $storeId
      * @return mixed
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    public function getSecretKey()
+    public function getSecretKey($storeId = null)
     {
-        return $this->getConfigValue('proofo/general/secret_key', $this->getStoreId());
+        return $this->getConfigValue('proofo/general/secret_key', $this->getStoreId($storeId));
     }
 
     /**
+     * @param string $storeId
      * @return mixed
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    public function getAppId()
+    public function getAppId($storeId = null)
     {
-        return $this->getConfigValue('proofo/general/app_id', $this->getStoreId());
+        return $this->getConfigValue('proofo/general/app_id', $this->getStoreId($storeId));
     }
+
+
 
     /**
      * @return mixed
