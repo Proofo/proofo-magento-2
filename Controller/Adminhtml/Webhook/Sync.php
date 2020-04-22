@@ -93,7 +93,8 @@ class Sync extends Action
     public function execute()
     {
         try {
-            $storeId = $this->getRequest()->getPost()->get("storeId");
+            $storeId = $this->getStoreId();
+
             $orders = $this->_orderCollectionFactory->create()
                                                     ->addFieldToSelect('*')
                                                     ->addFieldToFilter("store_id", $storeId)
@@ -174,5 +175,17 @@ class Sync extends Action
             'city'          => $billingAddress->getCity(),
             'country'       => $country->getName()
         ];
+    }
+
+    /**
+     * If no store id param provided, get the default store id
+     *
+     * @return int
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    public function getStoreId() {
+        return $this->getRequest()->getPost()->get("storeId")
+            ? $this->getRequest()->getPost()->get("storeId")
+            : $this->_helperData->getStoreId();
     }
 }

@@ -88,7 +88,7 @@ class WebHookSync
      * @return mixed|null
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    public function getSecretKey($storeId)
+    public function getSecretKey($storeId = null)
     {
         if (!$this->_secretKey) {
             $this->_secretKey = $this->_helperData->getSecretKey($storeId);
@@ -102,7 +102,7 @@ class WebHookSync
      * @return mixed|null
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    public function getAppId($storeId)
+    public function getAppId($storeId = null)
     {
         if (!$this->_appId) {
             $this->_appId = $this->_helperData->getAppId($storeId);
