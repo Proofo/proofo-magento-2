@@ -21,6 +21,7 @@
 
 namespace Avada\Proofo\Helper;
 
+use Magento\Framework\Encryption\EncryptorInterface;
 use Magento\Framework\UrlInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Framework\ObjectManagerInterface;
@@ -46,6 +47,11 @@ class Data extends AbstractHelper
     protected $objectManager;
 
     /**
+     * @var EncryptorInterface
+     */
+    protected $encryptor;
+
+    /**
      * @var array
      */
     protected $isArea = [];
@@ -57,18 +63,20 @@ class Data extends AbstractHelper
 
     /**
      * Data constructor.
-     *
      * @param Context $context
      * @param StoreManagerInterface $storeManager
      * @param ObjectManagerInterface $objectManager
+     * @param EncryptorInterface $encryptor
      */
     public function __construct(
         Context $context,
         StoreManagerInterface $storeManager,
-        ObjectManagerInterface $objectManager
+        ObjectManagerInterface $objectManager,
+        EncryptorInterface $encryptor
     ) {
         $this->storeManager  = $storeManager;
         $this->objectManager = $objectManager;
+        $this->encryptor     = $encryptor;
 
         parent::__construct($context);
     }
@@ -94,7 +102,9 @@ class Data extends AbstractHelper
      */
     public function getSecretKey($storeId = null)
     {
-        return $this->getConfigValue('proofo/general/secret_key', $this->getStoreId($storeId));
+        $secretKey = $this->getConfigValue('proofo/general/secret_key', $this->getStoreId($storeId));
+
+        return $this->encryptor->decrypt($secretKey);
     }
 
     /**
@@ -106,8 +116,6 @@ class Data extends AbstractHelper
     {
         return $this->getConfigValue('proofo/general/app_id', $this->getStoreId($storeId));
     }
-
-
 
     /**
      * @return mixed
