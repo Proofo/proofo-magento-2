@@ -45,7 +45,7 @@ define([
                 url: this.options.ajaxUrl,
                 data: {
                     "form_key": this.options.formKey,
-                    "storeId": storeId
+                    "store": storeId
                 },
                 dataType: 'json',
                 showLoader: true,

@@ -21,7 +21,6 @@
 
 namespace Avada\Proofo\Controller\Adminhtml\Webhook;
 
-use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\Json\Helper\Data as JsonHelper;
 use Avada\Proofo\Helper\WebHookSync;
@@ -34,7 +33,7 @@ use Magento\Directory\Model\CountryFactory;
  * Class Sync
  * @package Avada\Proofo\Controller\Adminhtml\Webhook
  */
-class Sync extends Action
+class Sync extends AbstractWebHook
 {
     /**
      * @var JsonHelper
@@ -77,14 +76,15 @@ class Sync extends Action
         OrderFactory $orderFactory,
         ProofoHelper $helper,
         CountryFactory $countryFactory
-    ) {
-        $this->jsonHelper              = $jsonHelper;
-        $this->_webHookSync            = $webHookSync;
+    )
+    {
+        $this->jsonHelper = $jsonHelper;
+        $this->_webHookSync = $webHookSync;
         $this->_orderCollectionFactory = $orderFactory;
-        $this->_helperData             = $helper;
-        $this->_countryFactory         = $countryFactory;
+        $this->_helperData = $helper;
+        $this->_countryFactory = $countryFactory;
 
-        parent::__construct($context);
+        parent::__construct($context, $helper);
     }
 
     /**
@@ -96,12 +96,12 @@ class Sync extends Action
             $storeId = $this->getStoreId();
 
             $orders = $this->_orderCollectionFactory->create()
-                                                    ->addFieldToSelect('*')
-                                                    ->addFieldToFilter("store_id", $storeId)
-                                                    ->setOrder(
-                                                        'entity_id',
-                                                        'desc'
-                                                    );
+                ->addFieldToSelect('*')
+                ->addFieldToFilter("store_id", $storeId)
+                ->setOrder(
+                    'entity_id',
+                    'desc'
+                );
             $orders->getSelect()->limit(30);
 
             $items = [];
@@ -128,7 +128,7 @@ class Sync extends Action
                         foreach ($item->getChildrenItems() as $childItem) {
                             /** @var \Magento\Catalog\Model\Product $childProduct */
                             $childProduct = $childItem->getProduct();
-                            $items[]      = $this->formatItemData($childProduct, $billingAddress, $country, $order);
+                            $items[] = $this->formatItemData($childProduct, $billingAddress, $country, $order);
                         }
                     } else {
                         $product = $item->getProduct();
@@ -164,28 +164,16 @@ class Sync extends Action
     public function formatItemData($product, $billingAddress, $country, $order)
     {
         return [
-            'product_name'  => $product->getName(),
+            'product_name' => $product->getName(),
             'product_image' => $this->_helperData->getProductImage($product),
-            'product_link'  => $product->getProductUrl(),
-            'product_id'    => $product->getId(),
-            'first_name'    => $billingAddress->getFirstname(),
-            'date'          => $order->getCreatedAt() === null
+            'product_link' => $product->getProductUrl(),
+            'product_id' => $product->getId(),
+            'first_name' => $billingAddress->getFirstname(),
+            'date' => $order->getCreatedAt() === null
                 ? date('c')
                 : date('c', strtotime($order->getCreatedAt())),
-            'city'          => $billingAddress->getCity(),
-            'country'       => $country->getName()
+            'city' => $billingAddress->getCity(),
+            'country' => $country->getName()
         ];
-    }
-
-    /**
-     * If no store id param provided, get the default store id
-     *
-     * @return int
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
-     */
-    public function getStoreId() {
-        return $this->getRequest()->getPost()->get("storeId")
-            ? $this->getRequest()->getPost()->get("storeId")
-            : $this->_helperData->getStoreId();
     }
 }

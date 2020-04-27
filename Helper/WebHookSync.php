@@ -116,14 +116,15 @@ class WebHookSync
      * @param string $type
      * @param string $topic
      * @param bool $isTest
+     * @param int $storeId
      * @throws LocalizedException
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    public function syncToWebHook($hookData, $type, $topic, $isTest = false)
+    public function syncToWebHook($hookData, $type, $topic, $isTest = false, $storeId = null)
     {
         $url           = self::APP_URL;
-        $sharedSecret  = $this->getSecretKey();
-        $appId         = $this->getAppId();
+        $sharedSecret  = $this->getSecretKey($storeId);
+        $appId         = $this->getAppId($storeId);
         $body          = $this->jsonHelper->jsonEncode($hookData);
         $generatedHash = base64_encode(hash_hmac('sha256', $body, $sharedSecret, true));
         $this->_curl->setHeaders([

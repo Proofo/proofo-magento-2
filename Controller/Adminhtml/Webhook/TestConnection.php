@@ -18,18 +18,19 @@
  * @copyright   Copyright (c) Avada (https://www.avada.io/)
  * @license     https://www.avada.io/LICENSE.txt
  */
+
 namespace Avada\Proofo\Controller\Adminhtml\Webhook;
 
-use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\Json\Helper\Data as JsonHelper;
 use Avada\Proofo\Helper\WebHookSync;
+use Avada\Proofo\Helper\Data as ProofoHelper;
 
 /**
  * Class TestConnection
  * @package Avada\Proofo\Controller\Adminhtml\Webhook
  */
-class TestConnection extends Action
+class TestConnection extends AbstractWebHook
 {
     /**
      * @var JsonHelper
@@ -45,17 +46,21 @@ class TestConnection extends Action
      * TestConnection constructor.
      * @param Context $context
      * @param JsonHelper $jsonHelper
+     * @param ProofoHelper $helper
      * @param WebHookSync $webHookSync
      */
     public function __construct(
         Context $context,
         JsonHelper $jsonHelper,
+        ProofoHelper $helper,
         WebHookSync $webHookSync
-    ) {
+    )
+    {
         $this->jsonHelper = $jsonHelper;
         $this->_webHookSync = $webHookSync;
+        $this->_helperData = $helper;
 
-        parent::__construct($context);
+        parent::__construct($context, $helper);
     }
 
     /**
@@ -64,9 +69,10 @@ class TestConnection extends Action
     public function execute()
     {
         try {
-            $this->_webHookSync->syncToWebHook([], WebHookSync::ORDER_WEBHOOK, WebHookSync::ORDER_CREATE_TOPIC, true);
-            $this->_webHookSync->syncToWebHook([], WebHookSync::CUSTOMER_WEBHOOK, WebHookSync::CUSTOMER_CREATE_TOPIC, true);
-            $this->_webHookSync->syncToWebHook([], WebHookSync::CART_WEBHOOK, WebHookSync::CART_UPDATE_TOPIC, true);
+            $storeId = $this->getStoreId();
+            $this->_webHookSync->syncToWebHook([], WebHookSync::ORDER_WEBHOOK, WebHookSync::ORDER_CREATE_TOPIC, true, $storeId);
+            $this->_webHookSync->syncToWebHook([], WebHookSync::CUSTOMER_WEBHOOK, WebHookSync::CUSTOMER_CREATE_TOPIC, true, $storeId);
+            $this->_webHookSync->syncToWebHook([], WebHookSync::CART_WEBHOOK, WebHookSync::CART_UPDATE_TOPIC, true, $storeId);
 
             $result = $this->jsonHelper->jsonEncode([
                 'status' => true,
@@ -82,4 +88,5 @@ class TestConnection extends Action
 
         return $this->getResponse()->representJson($result);
     }
+
 }
