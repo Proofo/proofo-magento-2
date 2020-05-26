@@ -38,6 +38,11 @@ class Snippet extends Template
     protected $helperData;
 
     /**
+     * @var \Magento\Framework\Registry
+     */
+    protected $_registry;
+
+    /**
      * Snippet constructor.
      * @param Context $context
      * @param Data $helperData
@@ -46,9 +51,12 @@ class Snippet extends Template
     public function __construct(
         Context $context,
         Data $helperData,
+        \Magento\Framework\Registry $registry,
         array $data = []
-    ) {
+    )
+    {
         $this->helperData = $helperData;
+        $this->_registry = $registry;
 
         parent::__construct($context, $data);
     }
@@ -77,5 +85,28 @@ class Snippet extends Template
     public function getAppUrl()
     {
         return WebHookSync::APP_URL;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCurrentProductId()
+    {
+        $currentProduct = $this->_registry->registry('current_product');
+        if ($currentProduct) {
+            return $this->_registry->registry('current_product')->getId();
+        }
+
+        return json_encode(null);
+    }
+
+    /**
+     * @return false|string
+     */
+    public function isProductPage()
+    {
+        return json_encode(
+            $this->_request->getFullActionName() === 'catalog_product_view'
+        );
     }
 }

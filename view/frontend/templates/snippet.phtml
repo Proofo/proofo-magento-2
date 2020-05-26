@@ -24,7 +24,9 @@
 if ($block->isEnabled()) : ?>
 
 <!--    START Proofo.io Social Proof-->
-    <script data-cfasync="false" type="text/javascript">(function(b,d,p){window.AVADA_SALES_POP=window.AVADA_SALES_POP||{};window.AVADA_SALES_POP.domain=d;window.AVADA_SALES_POP.platform=p;var s=document.createElement("script");s.type="text/javascript";s.async=!0;s.src=b;var x=document.getElementsByTagName("script")[0];x.parentNode.insertBefore(s,x)})("<?= /* @noEscape */ $block->getAppUrl() ?>/sdk/proofo-sdk.min.js","<?= /* @noEscape */ $block->getAppId() ?>",'magento');</script>
+    <script data-cfasync="false" type="text/javascript">(function(b,d,p){window.AVADA_SALES_POP=window.AVADA_SALES_POP||{};window.AVADA_SALES_POP.domain=d;window.AVADA_SALES_POP.platform=p;window.AVADA_SALES_POP.productId=<?= $block->getCurrentProductId()?>;window.AVADA_SALES_POP.isProductPage=<?= $block->isProductPage()?>;var s=document.createElement("script");s.type="text/javascript";s.async=!0;s.src=b;var x=document.getElementsByTagName("script")[0];x.parentNode.insertBefore(s,x)})("<?= /* @noEscape */ $block->getAppUrl() ?>/sdk/proofo-sdk.min.js","<?= /* @noEscape */ $block->getAppId() ?>",'magento');</script>
 <!--    END Proofo.io Social Proof-->
 
 <?php endif; ?>
+
+
