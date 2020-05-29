@@ -75,6 +75,16 @@
                     </depends>
                     <comment>Switch to the corresponding store view to sync data to correct account. If not, the default config will be used.</comment>
                 </field>
+                <field id="sync_statistic_orders" translate="label" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label></label>
+                    <button_label>Sync orders statistic</button_label>
+                    <button_url>proofo/statistic/sync</button_url>
+                    <frontend_model>\Avada\Proofo\Block\Adminhtml\System\Config\SyncStatistic</frontend_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                    <comment>Sync your orders to Proofo for statistic purpose.</comment>
+                </field>
                 <field id="enabled_webhooks" translate="label" type="multiselect" sortOrder="25" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>When sync to Proofo</label>
                     <source_model>Avada\Proofo\Model\Config\Webhooks</source_model>
