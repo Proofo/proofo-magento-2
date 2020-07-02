@@ -19,6 +19,13 @@
  * @license     https://www.avada.io/LICENSE.txt
  */
 ?>
+<?php
+/** @var Avada\Proofo\Block\OrderSuccess $block */
+?>
+<!--    START Proofo.io Social Proof-->
 <script>
-    window.AVADA_SALES_POP.checkout.items = <?= $block->getOrderItems() ?>;
+    window.AVADA_SALES_POP.checkout = {};
+    window.AVADA_SALES_POP.checkout.isThankYouPage = true;
+    window.AVADA_SALES_POP.checkout.items = JSON.parse('<?= $block->getOrderItems()?>');
 </script>
+<!--    END Proofo.io Social Proof-->

@@ -32,7 +32,8 @@ use Magento\Framework\Json\Helper\Data;
  * Class OrderSuccess
  * @package Avada\Proofo\Block
  */
-class OrderSuccess extends Template{
+class OrderSuccess extends Template
+{
     /**
      * @var CheckoutSession
      */
@@ -68,9 +69,10 @@ class OrderSuccess extends Template{
         Context $context,
         Data $jsonHelper,
         array $data = []
-    ) {
+    )
+    {
         $this->checkoutSession = $checkoutSession;
-        $this->_orderFactory   = $orderFactory;
+        $this->_orderFactory = $orderFactory;
         $this->jsonHelper = $jsonHelper;
 
         parent::__construct($context, $data);
@@ -86,7 +88,7 @@ class OrderSuccess extends Template{
                 ->loadByIncrementId($this->checkoutSession->getLastRealOrderId());
         }
 
-        $items = [];
+        $lineItems = [];
         $orderItems = $this->_order->getAllVisibleItems();
         /**
          * @var \Magento\Sales\Model\Order\Item $item
@@ -95,12 +97,13 @@ class OrderSuccess extends Template{
             $product = $item->getProduct();
             if ($product) {
                 $lineItems[] = [
-                    'title'         => $item->getName(),
-                    'line_price'         => $item->getBaseRowTotal(),
-                    'product_id'    => $product->getId()
+                    'title' => $item->getName(),
+                    'line_price' => $item->getBaseRowTotal(),
+                    'product_id' => $product->getId()
                 ];
             }
         }
-        return $this->jsonHelper->jsonEncode($items);
+
+        return $this->jsonHelper->jsonEncode($lineItems);
     }
 }
