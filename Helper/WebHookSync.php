@@ -33,7 +33,7 @@ use Avada\Proofo\Helper\Data as Helper;
  */
 class WebHookSync
 {
-    const APP_URL = 'https://avada-sales-pop-staging.firebaseapp.com';
+    const APP_URL = 'https://9f44209cbb7d.ngrok.io';
     const CART_WEBHOOK = 'cart';
     const ORDER_WEBHOOK = 'order';
     const CUSTOMER_WEBHOOK = 'customer';
@@ -130,7 +130,8 @@ class WebHookSync
             'X-Proofo-Hmac-Sha256' => $generatedHash,
             'X-Proofo-App-Id' => $appId,
             'X-Proofo-Topic' => $topic,
-            'X-Proofo-Connection-Test' => $isTest
+            'X-Proofo-Connection-Test' => $isTest,
+            'X-Proofo-Source'          => 'magento'
         ]);
         $this->_curl->post("$url/webhook/$type", $body);
         if ($this->_curl->getStatus() !== 200) {

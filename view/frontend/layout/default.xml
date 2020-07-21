@@ -25,5 +25,13 @@
         <referenceContainer name="content">
             <block class="Avada\Proofo\Block\Snippet" name="avada-proofo.snippet" template="Avada_Proofo::snippet.phtml" ifconfig="proofo/general/enabled"/>
         </referenceContainer>
+        <referenceBlock name="product.review.form">
+            <action method="remove" ifconfig="proofo/general/enabled">
+            </action>
+        </referenceBlock>
+        <referenceBlock name="product.info.review">
+            <action method="remove" ifconfig="proofo/general/enabled">
+            </action>
+        </referenceBlock>
     </body>
 </page>

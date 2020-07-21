@@ -22,10 +22,8 @@
 -->
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
-        <referenceBlock name="reviews.tab">
-            <action method="setTemplate" ifconfig="proofo/general/enabled">
-                <argument name="template" xsi:type="string">Avada_Proofo::review.phtml</argument>
-            </action>
-        </referenceBlock>
+        <referenceContainer name="sales.order.history.info">
+            <block class="\Magento\Framework\View\Element\Template" name="avada.apr.reviewReminder" template="Avada_Proofo::snippets/review_reminder.phtml" ifconfig="proofo/general/enabled"/>
+        </referenceContainer>
     </body>
 </page>
