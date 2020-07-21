@@ -131,11 +131,18 @@ class SyncOrder
                 ? date('c')
                 : date('c', strtotime($order->getUpdatedAt()));
             $hookData  = [
+                'id' => $order->getId(),
                 'billing_address' => [
                     'city'       => $billingAddress->getCity(),
                     'country'    => $country->getName(),
                     'first_name' => $billingAddress->getFirstname(),
                     'last_name'  => $billingAddress->getLastname(),
+                ],
+                'customer' => [
+                    'id' => $order->getCustomerId(),
+                    'first_name' => $order->getCustomerFirstname(),
+                    'last_name' => $order->getCustomerLastname(),
+                    'email' => $order->getCustomerEmail()
                 ],
                 'created_at'      => $createdAt,
                 'line_items'      => $lineItems

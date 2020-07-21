@@ -39,6 +39,22 @@ if ($block->isEnabled()) : ?>
         })("<?= /* @noEscape */ $block->getAppUrl() ?>/sdk/proofo-sdk.min.js", "<?= /* @noEscape */ $block->getAppId() ?>", 'magento');</script>
     <!--    END Proofo.io Social Proof-->
 
+    <!--    START Proofo.io Photo Reviews-->
+    <script data-cfasync="false" type="text/javascript">(function (b, d, p) {
+            window.AVADA_PR = window.AVADA_PR || {};
+            window.AVADA_PR.shopId = d;
+            window.AVADA_PR.isProductPage =<?= $block->isProductPage()?>;
+            window.AVADA_PR.product = window.AVADA_PR.product || {};
+            window.AVADA_PR.product.id = <?= $block->getCurrentProductId()?>;
+            window.AVADA_PR.platform = p;
+            var s = document.createElement("script");
+            s.type = "text/javascript";
+            s.async = !0;
+            s.src = b;
+            var x = document.getElementsByTagName("script")[0];
+            x.parentNode.insertBefore(s, x)
+        })("<?= /* @noEscape */ $block->getAppUrl() ?>/scripttag/avada-pr.min.js", "<?= /* @noEscape */ $block->getAppId() ?>", 'magento');</script>
+    <!--    END Proofo.io Photo Reviews-->
 <?php endif; ?>
 
 
