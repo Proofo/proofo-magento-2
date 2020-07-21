@@ -49,7 +49,9 @@ if ($block->isEnabled()) : ?>
             window.AVADA_PR.platform = p;
             window.AVADA_PR.template = '<?= $block->getTemplateHandler() ?>';
             window.AVADA_PR.customer = window.AVADA_PR.customer || {};
-            window.AVADA_PR.customer.id = <?= $block->getCustomerId() ?>;
+            <?php if ($block->getCustomerId()): ?>
+                window.AVADA_PR.customer.id = <?= $block->getCustomerId() || null ?>;
+            <?php endif; ?>
             var s = document.createElement("script");
             s.type = "text/javascript";
             s.async = !0;
