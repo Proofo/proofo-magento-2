@@ -36,7 +36,7 @@ class ListProduct extends CoreListProduct
         /** @var $product \Magento\Catalog\Model\Product */
         foreach ($productCollection as $product) {
             $productJsonData[] = [
-                "id" => $product->getId(),
+                "id" => (int)$product->getId(),
                 "handle" => $product->getProductUrl()
             ];
         }
