@@ -160,9 +160,6 @@ class Snippet extends Template
      * @return int|null
      */
     public function getCustomerId () {
-        $objectManager =  \Magento\Framework\App\ObjectManager::getInstance();
-        $customerSession = $objectManager->get('Magento\Customer\Model\SessionFactory')->create();
-
-        return $customerSession->getCustomer()->getId();
+        return $this->_customerSession->getCustomerId() ? $this->_customerSession->getCustomerId() : null;
     }
 }
