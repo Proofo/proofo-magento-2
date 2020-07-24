@@ -45,7 +45,7 @@ if ($block->isEnabled()) : ?>
             window.AVADA_PR.shopId = d;
             window.AVADA_PR.isProductPage =<?= $block->isProductPage()?>;
             window.AVADA_PR.product = window.AVADA_PR.product || {};
-            window.AVADA_PR.product.id = <?= $block->getCurrentProductId()?>;
+            window.AVADA_PR.product = <?= json_encode($block->getCurrentProduct()) ?>;
             window.AVADA_PR.platform = p;
             window.AVADA_PR.template = '<?= $block->getTemplateHandler() ?>';
             window.AVADA_PR.customer = window.AVADA_PR.customer || {};

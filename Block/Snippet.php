@@ -26,6 +26,7 @@ use \Magento\Framework\View\Element\Template\Context;
 use Avada\Proofo\Helper\Data;
 use Avada\Proofo\Helper\WebHookSync;
 use \Magento\Customer\Model\Session;
+use \Magento\Catalog\Model\ProductFactory;
 
 /**
  * Class Snippet
@@ -49,6 +50,11 @@ class Snippet extends Template
     protected $_customerSession;
 
     /**
+     * @var
+     */
+    protected $_productFactory;
+
+    /**
      * Snippet constructor.
      *
      * @param Context $context
@@ -62,12 +68,14 @@ class Snippet extends Template
         Data $helperData,
         \Magento\Framework\Registry $registry,
         Session $customerSession,
+        ProductFactory $productFactory,
         array $data = []
     )
     {
         $this->helperData = $helperData;
         $this->_registry = $registry;
         $this->_customerSession = $customerSession;
+        $this->_productFactory = $productFactory;
 
         parent::__construct($context, $data);
     }
@@ -112,6 +120,26 @@ class Snippet extends Template
     }
 
     /**
+     * @return array
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    public function getCurrentProduct()
+    {
+        $productId = $this->getCurrentProductId();
+        if ($productId) {
+            $product = $this->_productFactory->create()->load($productId);
+            return [
+                "id" => $product->getId(),
+                "title" => $product->getName(),
+                "image" => $this->helperData->getProductImage($product),
+                "productLink" => $product->getProductUrl()
+            ];
+        }
+
+        return [];
+    }
+
+    /**
      * @return false|string
      */
     public function isProductPage()
@@ -132,6 +160,9 @@ class Snippet extends Template
      * @return int|null
      */
     public function getCustomerId () {
-        return $this->_customerSession->getCustomerId();
+        $objectManager =  \Magento\Framework\App\ObjectManager::getInstance();
+        $customerSession = $objectManager->get('Magento\Customer\Model\SessionFactory')->create();
+
+        return $customerSession->getCustomer()->getId();
     }
 }
