@@ -27,7 +27,7 @@
                 <enabled>0</enabled>
             </general>
             <webhook>
-                <enabled_webhooks>orders_hook,cart_hook,signup_hook</enabled_webhooks>
+                <enabled_webhooks>orders_hook</enabled_webhooks>
                 <bundle_as_multiple>0</bundle_as_multiple>
             </webhook>
         </proofo>

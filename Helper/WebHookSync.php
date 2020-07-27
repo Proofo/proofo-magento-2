@@ -33,7 +33,7 @@ use Avada\Proofo\Helper\Data as Helper;
  */
 class WebHookSync
 {
-    const APP_URL = 'https://avada-sales-pop-staging.firebaseapp.com';
+    const APP_URL = 'https://app.proofo.io';
     const CART_WEBHOOK = 'cart';
     const ORDER_WEBHOOK = 'order';
     const CUSTOMER_WEBHOOK = 'customer';

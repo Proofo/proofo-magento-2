@@ -18,6 +18,22 @@
  * @copyright   Copyright (c) Avada (https://www.avada.io/)
  * @license     https://www.avada.io/LICENSE.txt
  */
-?>
-<?php /** @var $block \Avada\Proofo\Block\Catalog\Product\WidgetListProduct */ ?>
-<h1>Works</h1>
+
+namespace Avada\Proofo\Plugin;
+
+/**
+ * Class ReviewTabTitle
+ * @package Avada\Proofo\Plugin
+ */
+class ReviewTabTitle
+{
+    /**
+     * @param \Magento\Review\Block\Product\Review $subject
+     * @param $result
+     */
+    public function afterSetTabTitle(\Magento\Review\Block\Product\Review $subject, $result)
+    {
+        $title = __('Reviews %1', '<span class="Avada-Pr__Counter"></span>');
+        $subject->setTitle($title);
+    }
+}

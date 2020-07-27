@@ -30,4 +30,7 @@
     <type name="Magento\Catalog\Block\Product\AbstractProduct">
         <plugin name="avada_proofo_review_widget_hidden" type="\Avada\Proofo\Plugin\ReviewWidget"/>
     </type>
+    <type name="\Magento\Review\Block\Product\Review">
+        <plugin name="avada_proofo_review_counter" type="\Avada\Proofo\Plugin\ReviewTabTitle"/>
+    </type>
 </config>

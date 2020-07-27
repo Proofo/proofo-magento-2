@@ -21,6 +21,10 @@
 
 namespace Avada\Proofo\Block\Adminhtml\System\Config;
 
+/**
+ * Class SyncStatistic
+ * @package Avada\Proofo\Block\Adminhtml\System\Config
+ */
 class SyncStatistic extends Sync
 {
 

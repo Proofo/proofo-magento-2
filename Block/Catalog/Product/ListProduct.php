@@ -23,6 +23,10 @@ namespace Avada\Proofo\Block\Catalog\Product;
 
 use Magento\Catalog\Block\Product\ListProduct as CoreListProduct;
 
+/**
+ * Class ListProduct
+ * @package Avada\Proofo\Block\Catalog\Product
+ */
 class ListProduct extends CoreListProduct
 {
     /**
