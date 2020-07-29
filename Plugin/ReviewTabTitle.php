@@ -21,6 +21,8 @@
 
 namespace Avada\Proofo\Plugin;
 
+use Avada\Proofo\Helper\Data as Helper;
+
 /**
  * Class ReviewTabTitle
  * @package Avada\Proofo\Plugin
@@ -28,12 +30,33 @@ namespace Avada\Proofo\Plugin;
 class ReviewTabTitle
 {
     /**
+     * @var Helper
+     */
+    protected $_helperData;
+
+    /**
+     * ReviewTabTitle constructor.
+     *
+     * @param Helper $helper
+     */
+    public function __construct(Helper $helper)
+    {
+        $this->_helperData = $helper;
+    }
+
+    /**
      * @param \Magento\Review\Block\Product\Review $subject
      * @param $result
+     * @return mixed
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
     public function afterSetTabTitle(\Magento\Review\Block\Product\Review $subject, $result)
     {
-        $title = __('Reviews %1', '<span class="Avada-Pr__Counter"></span>');
-        $subject->setTitle($title);
+        if ($this->_helperData->isPhotoReviewsEnabled()) {
+            $title = __('Reviews %1', '<span class="Avada-Pr__Counter"></span>');
+            $subject->setTitle($title);
+        }
+
+        return $result;
     }
 }

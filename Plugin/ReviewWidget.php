@@ -21,6 +21,8 @@
 
 namespace Avada\Proofo\Plugin;
 
+use Avada\Proofo\Helper\Data as Helper;
+
 /**
  * Class ReviewWidget
  * @package Avada\Proofo\Plugin
@@ -28,30 +30,50 @@ namespace Avada\Proofo\Plugin;
 class ReviewWidget
 {
     /**
+     * @var Helper
+     */
+    protected $_helperData;
+
+    /**
+     * ReviewTabTitle constructor.
+     *
+     * @param Helper $helper
+     */
+    public function __construct(Helper $helper)
+    {
+        $this->_helperData = $helper;
+    }
+
+    /**
      * @param \Magento\CatalogWidget\Block\Product\ProductsList $subject
      * @param $result
      * @return string
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
     public function afterGetPagerHtml(\Magento\CatalogWidget\Block\Product\ProductsList $subject, $result)
     {
-        $productCollection = $subject->getProductCollection();
-        $productJsonData = [];
+        if ($this->_helperData->isPhotoReviewsEnabled()) {
+            $productCollection = $subject->getProductCollection();
+            $productJsonData = [];
 
-        /** @var $product \Magento\Catalog\Model\Product */
-        foreach ($productCollection as $product) {
-            $productJsonData[] = [
-                "id" => (int)$product->getId(),
-                "handle" => $product->getProductUrl()
-            ];
-        }
-        $jsonProducts = json_encode($productJsonData);
+            /** @var $product \Magento\Catalog\Model\Product */
+            foreach ($productCollection as $product) {
+                $productJsonData[] = [
+                    "id" => (int)$product->getId(),
+                    "handle" => $product->getProductUrl()
+                ];
+            }
+            $jsonProducts = json_encode($productJsonData);
 
-        return $result . "
+            return $result . "
             <script>
                 window.AVADA_PR_PRODUCT_COLLECTION = window.AVADA_PR_PRODUCT_COLLECTION || [];
                 window.AVADA_PR_PRODUCT_COLLECTION = $jsonProducts
             </script>
         ";
+        }
+
+        return $result;
     }
 
     /**

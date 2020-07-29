@@ -169,6 +169,15 @@ class Data extends AbstractHelper
     }
 
     /**
+     * @return array|bool|mixed
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    public function isPhotoReviewsEnabled()
+    {
+        return $this->getConfigValue('proofo/general/enabled_pr', $this->getStoreId());
+    }
+
+    /**
      * @param string $field
      * @param null $scopeValue
      * @param string $scopeType

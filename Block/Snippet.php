@@ -99,6 +99,15 @@ class Snippet extends Template
     }
 
     /**
+     * @return array|bool|mixed
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    public function isPhotoReviewsEnabled()
+    {
+        return $this->helperData->isPhotoReviewsEnabled();
+    }
+
+    /**
      * @return string
      */
     public function getAppUrl()
