@@ -27,4 +27,7 @@
     <event name="customer_register_success">
         <observer name="proofo_new_customer_sync" instance="Avada\Proofo\Observer\NewCustomer"/>
     </event>
+    <event name="review_save_commit_after">
+        <observer name="proofo_sync_review" instance="Avada\Proofo\Observer\SyncReview"/>
+    </event>
 </config>
