@@ -33,9 +33,14 @@
             <group id="general" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>General</label>
                 <field id="enabled" translate="label comment" type="select" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Enable</label>
+                    <label>Enable Social Proof</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <comment><![CDATA[Dont' have an API? <a href="https://proofo.io/" target="_blank">click here</a> to know how to create new one.?]]></comment>
+                </field>
+                <field id="enabled_pr" translate="label comment" type="select" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable Photo Reviews</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Replace Magento 2 Reviews with Proofo Photo Reviews</comment>
                 </field>
                 <field id="app_id" translate="label comment" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>App ID</label>
@@ -99,7 +104,7 @@
                         <field id="enabled">1</field>
                     </depends>
                 </field>
-                <field id="reviews" translate="label" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="reviews" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Sync reviews</label>
                     <source_model>Avada\Proofo\Model\Config\Review</source_model>
                     <depends>

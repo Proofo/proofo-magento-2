@@ -167,16 +167,6 @@ class Data extends AbstractHelper
     }
 
     /**
-     * @param string $storeId
-     * @return mixed
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
-     */
-    public function getSyncReviews($storeId = null)
-    {
-        return $this->getConfigValue('proofo/webhook/reviews', $this->getStoreId($storeId));
-    }
-
-    /**
      * @return array|mixed
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
@@ -217,6 +207,25 @@ class Data extends AbstractHelper
     }
 
     /**
+     * @return array|bool|mixed
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    public function isPhotoReviewsEnabled()
+    {
+        return $this->getConfigValue('proofo/general/enabled_pr', $this->getStoreId());
+    }
+
+    /**
+     * @param string $storeId
+     * @return mixed
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    public function getSyncReviews($storeId = null)
+    {
+        return $this->getConfigValue('proofo/webhook/reviews', $this->getStoreId($storeId));
+    }
+
+    /**
      * @param string $field
      * @param null $scopeValue
      * @param string $scopeType
@@ -250,7 +259,7 @@ class Data extends AbstractHelper
 
             try {
                 $this->isArea[$area] = ($state->getAreaCode() == $area);
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 $this->isArea[$area] = false;
             }
         }
@@ -356,4 +365,3 @@ class Data extends AbstractHelper
         return 0;
     }
 }
-
