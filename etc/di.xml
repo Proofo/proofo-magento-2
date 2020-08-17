@@ -25,13 +25,13 @@
         <plugin name="avada_hook_order" type="Avada\Proofo\Plugin\SyncOrder"/>
     </type>
     <type name="\Magento\CatalogWidget\Block\Product\ProductsList">
-        <plugin name="avada_proofo_review_widget" type="\Avada\Proofo\Plugin\ReviewWidget" sortOrder="1" />
+        <plugin name="avada_proofo_review_widget" type="Avada\Proofo\Plugin\ReviewWidget" sortOrder="1" />
     </type>
     <type name="Magento\Catalog\Block\Product\AbstractProduct">
-        <plugin name="avada_proofo_review_widget_hidden" type="\Avada\Proofo\Plugin\ReviewWidget"/>
+        <plugin name="avada_proofo_review_widget_hidden" type="Avada\Proofo\Plugin\ReviewWidget"/>
     </type>
     <type name="\Magento\Review\Block\Product\Review">
-        <plugin name="avada_proofo_review_counter" type="\Avada\Proofo\Plugin\ReviewTabTitle"/>
+        <plugin name="avada_proofo_review_counter" type="Avada\Proofo\Plugin\ReviewTabTitle"/>
     </type>
     <type name="Magento\Framework\Console\CommandList">
         <arguments>
