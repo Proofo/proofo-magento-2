@@ -126,17 +126,16 @@ class WebHookSync
         $body = $this->jsonHelper->jsonEncode($hookData);
         $generatedHash = base64_encode(hash_hmac('sha256', $body, $sharedSecret, true));
         $this->_curl->setHeaders([
-                                     'Content-Type' => 'application/json',
-                                     'X-Proofo-Hmac-Sha256' => $generatedHash,
-                                     'X-Proofo-App-Id' => $appId,
-                                     'X-Proofo-Topic' => $topic,
-                                     'X-Proofo-Connection-Test' => $isTest,
-                                     'X-Proofo-Source'          => 'magento'
-                                 ]);
+            'Content-Type' => 'application/json',
+            'X-Proofo-Hmac-Sha256' => $generatedHash,
+            'X-Proofo-App-Id' => $appId,
+            'X-Proofo-Topic' => $topic,
+            'X-Proofo-Connection-Test' => $isTest
+        ]);
         $this->_curl->post("$url/webhook/$type", $body);
-        if ($this->_curl->getStatus() !== 200) {
-            $body = $this->_curl->getBody();
-            $bodyData = $this->jsonHelper->jsonDecode($body);
+        $body = $this->_curl->getBody();
+        $bodyData = $this->jsonHelper->jsonDecode($body);
+        if (!$bodyData['success']) {
             throw new LocalizedException(__($bodyData['message']));
         }
     }
