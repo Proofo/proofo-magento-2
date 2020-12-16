@@ -36,10 +36,7 @@ If you don't want to install via composer, you can use this way.
 - Extract `master.zip` file to `app/code/Avada/Proofo` ; You should create a folder path `app/code/Avada/Proofo` if not exist.
 - Go to Magento root folder and run upgrade command line to install `Avada_Proofo`:
 
-## How to use
-
-See our official documentation here: https://help.avada.io/en-us/category/proofo-social-proof-16ahtap/
 
 ## Information
 - Website: https://proofo.io
-- Support: https://avada.io/contact.html
+- Support: https://proofo.io/contact.html
