@@ -1,4 +1,4 @@
-# Social Proof for Magento 2
+# Social Proof for Magento 2 (Discontinued)
 
 Proofo is Social Proof app for Magento 2 which helps merchants increase conversion rate 30%, trust, credibility, and sales with real-time social proof.
 
